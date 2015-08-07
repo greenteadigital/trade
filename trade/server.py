@@ -4,10 +4,10 @@ from urlparse import urlparse, parse_qs
 import sys
 sys.path.append(r".\code")
 from macd import getMacd	#@UnresolvedImport
-from symbols import getSyms #@UnresolvedImport
-from obv import getObv #@UnresolvedImport
+from symbols import getSyms	#@UnresolvedImport
+from obv import getObv	#@UnresolvedImport
 
-PORT = 8080
+PORT = 80
 
 class CustomHandler(SimpleHTTPRequestHandler):
 	
