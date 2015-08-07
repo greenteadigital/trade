@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<script type="text/javascript" src="../../charts/js/lib/d3.js" charset="utf-8"></script>
+	<script type="text/javascript" src="../../charts/js/candles.js"></script>
+	<script type="text/javascript" src="../../charts/js/macd.js"></script>
+	<script type="text/javascript" src="../../charts/js/obv.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../charts/css/chart.css">
+	<title>EOD OHLC Candles</title>
+  </head>
+  <body>
+	<div class="ctrls">
+		<label for="daysPer">Days/Candle: </label><input type="number" value="5" id="daysPer"/>
+		<label for="zoom">Zoom: </label><input type="range" max="2.5" value="1" min="0.4" step="0.025" id="zoom"/>
+		<label for="volmult">Volume: </label><input type="range" max="0.01" value="0.00001" min="0.00000001" step="0.000001" id="volmult"/>
+		<select id="symselect"></select>
+	</div>
+	<br/>
+	<div class="candlesticks"></div>
+	<br/>
+	<div class="obv">OBV:
+		<input type="checkbox" id="obvPoints"/><label for="obvPoints">Points</label>
+	</div>
+	<br/>
+	<div class="macd">MACD:
+		<input type="checkbox" id="macdPoints"/><label for="macdPoints">Mpts</label>
+		<input type="checkbox" id="sigPoints"/><label for="sigPoints">Spts</label>
+		<input type="checkbox" id="macdHisto"/><label for="macdHisto">Histogram</label>
+	</div>
+	
+	<script type="text/javascript">
+	var log = console.log;
+
+	var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    cwidth = w.innerWidth || e.clientWidth || g.clientWidth,
+    cheight = w.innerHeight|| e.clientHeight|| g.clientHeight;
+	
+	var margin = 35;
+	var daysPerCandle = 5;
+	var zoomMult = 1;
+	var yTicks = 10;
+	var volmult = 0.000001;
+	var symbolsLoaded = false;
+	var candleData;
+	var dataServer = 'http://localhost:8080'
+
+	function aggregate(eod) {
+		if (typeof candleData === 'undefined') { candleData = eod }
+		
+		if (daysPerCandle > 1) {
+			var out = [],
+			start = 0,
+			end = daysPerCandle;
+			
+			while (end <= eod.length) {
+				var chunk = eod.slice(start, end);
+				var agg = {
+					"Date": chunk[0].Date,
+					"Open": +chunk[chunk.length - 1].Open, 
+					"High": d3.max(chunk.map(function(d) { return +d.High })),
+					"Low": d3.min(chunk.map(function(d) { return +d.Low })),
+					"Close": +chunk[0].Close,
+					"Volume": d3.sum(chunk.map(function(d) { return +d.Volume })),
+					//"Adj Close": chunk[0]["Adj Close"]
+					}
+				out.push(agg);
+				
+				start = end;
+				end = start + daysPerCandle;
+			}
+			buildCandles(out);
+		} else {
+			buildCandles(candleData);			
+		}
+	}
+	
+	function fetchData() {
+		
+		if (symbolsLoaded == false) {
+			d3.json(dataServer + '/symbols.json', function(d) {
+				var dropdown = d3.select("#symselect")
+				
+				dropdown.selectAll("option")
+					.data(d).enter()
+					.append("option")
+					.attr("value", function(d) { return d })
+					.text(String)
+				
+				dropdown.select("option[selected=selected]")
+					.attr("selected", null);
+				
+				dropdown.select("option[value=" + window.location.hash.replace('#','') + "]")
+					.attr("selected", "selected");
+				
+			});
+			symbolsLoaded = true;
+		}
+		
+		if (typeof candleData === 'undefined') {			
+			d3.csv(dataServer + '/data/csv/' + '_' + window.location.hash.replace('#','') + '.csv', aggregate);
+		} else	{
+			aggregate(candleData);
+		}
+		
+		d3.json(dataServer
+				+ '/macd.json'
+				+ '?fast=' + fast
+				+ '&slow=' + slow
+				+ '&symbol=' + window.location.hash.replace('#','')
+				+ '&signal=' + signal
+				+ '&dpc=' + daysPerCandle,
+				buildMacd);
+		
+		d3.json(dataServer
+				+ '/obv.json'
+				+ '?symbol=' + window.location.hash.replace('#','')
+				+ '&dpc=' + daysPerCandle,
+				buildObv);
+	}
+	</script>
+	<script type="text/javascript" src="../../charts/js/events.js"></script>
+  </body>
+</html>
+
+
+
+
+

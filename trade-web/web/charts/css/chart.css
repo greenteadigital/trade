@@ -1,0 +1,44 @@
+.down {
+	stroke: #cc0000;
+	fill: #cc0000;
+}
+.up{
+	fill: white;
+	stroke: black;
+}
+svg {
+	/*shape-rendering: crispEdges;*/
+}
+.ctrls {
+	position: fixed;
+	top:5px;
+	left:0;
+	background: white;
+}
+input[type=range] {
+   	width: 4em;
+}
+input#volmult {
+   	width: 6em;
+}
+.volumeBar {
+	opacity: 0.35;
+}
+.volumeBar.up {
+	fill: black;
+}
+#zoom, #volmult {
+	width:100px;
+}
+.macdZero, .obvZero {
+	stroke: black;
+	stroke-width: 1;
+}
+.obvLine {
+	stroke-width: 2;
+	stroke: darkolivegreen;
+	fill: none;
+}
+.histo {
+	opacity: 0.4
+}
