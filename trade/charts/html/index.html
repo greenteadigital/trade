@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-	<script type="text/javascript" src="../../charts/js/lib/d3.js" charset="utf-8"></script>
-	<script type="text/javascript" src="../../charts/js/candles.js"></script>
-	<script type="text/javascript" src="../../charts/js/macd.js"></script>
-	<script type="text/javascript" src="../../charts/js/obv.js"></script>
-	<link rel="stylesheet" type="text/css" href="../../charts/css/chart.css">
+	<script type="text/javascript" src="/charts/js/lib/d3.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/charts/js/candles.js"></script>
+	<script type="text/javascript" src="/charts/js/macd.js"></script>
+	<script type="text/javascript" src="/charts/js/obv.js"></script>
+	<script type="text/javascript" src="/charts/js/common.js"></script>
+	<link rel="stylesheet" type="text/css" href="/charts/css/chart.css">
 	<title>EOD OHLC Candles</title>
   </head>
   <body>
@@ -29,23 +30,12 @@
 	</div>
 	
 	<script type="text/javascript">
-	var log = console.log;
-
-	var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-    cwidth = w.innerWidth || e.clientWidth || g.clientWidth,
-    cheight = w.innerHeight|| e.clientHeight|| g.clientHeight;
-	
-	var margin = 35;
+		
 	var daysPerCandle = 5;
-	var zoomMult = 1;
 	var yTicks = 10;
 	var volmult = 0.000001;
 	var symbolsLoaded = false;
 	var candleData;
-	var dataServer = 'http://localhost'
 
 	function aggregate(eod) {
 		if (typeof candleData === 'undefined') { candleData = eod }
@@ -121,7 +111,7 @@
 				buildObv);
 	}
 	</script>
-	<script type="text/javascript" src="../../charts/js/events.js"></script>
+	<script type="text/javascript" src="/charts/js/events.js"></script>
   </body>
 </html>
 
