@@ -77,8 +77,7 @@ var buildMacd = function(data) {
 					})
 				.attr("width", getRectWidth)
 				.attr("height", function(d) { return d.d * yExaggerate * 1.5 })
-				.attr("stroke", function(d){ return d.MACD < d.Sig ? "#c00" : "black" })
-				.attr("class", "histo");
+				.attr("class", function(d) { return d.MACD < d.Sig ? "histo pos" : "histo neg" });
 		} else {
 			histo.remove();
 		}
@@ -94,11 +93,8 @@ var buildMacd = function(data) {
 				.attr("cx", function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
 				.attr("cy", function(d) { return y(d.Sig * yExaggerate) })
 				.attr("r", 2)
-				.attr("stroke", "orange")
-				.attr("stroke-width", 2)
-				.attr("fill", "black")
 				.attr("title", function(d) { return d.Date + " Signal: " + d.Sig + "" })
-				.attr("class","sigPoints");
+				.attr("class","points");
 		} else {
 			points.remove();
 		}

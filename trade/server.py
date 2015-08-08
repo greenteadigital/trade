@@ -6,8 +6,14 @@ sys.path.append(r".\code")
 from macd import getMacd	#@UnresolvedImport
 from symbols import getSyms	#@UnresolvedImport
 from obv import getObv	#@UnresolvedImport
+from history import getHistory	#@UnresolvedImport
 
 PORT = 80
+
+urls = {'/macd.json': getMacd,
+		'/symbols.json': getSyms,
+		'/obv.json': getObv,
+		'/history.json': getHistory}
 
 class CustomHandler(SimpleHTTPRequestHandler):
 	
@@ -18,22 +24,10 @@ class CustomHandler(SimpleHTTPRequestHandler):
 	def do_GET(self):
 		url = urlparse(self.path)
 		
-		if url.path=='/macd.json':
+		if url.path in urls:
 			self.send_response(200)
 			self.end_headers()
-			self.wfile.write(getMacd(parse_qs(url.query)))
-			return
-		
-		elif url.path=='/symbols.json':
-			self.send_response(200)
-			self.end_headers()
-			self.wfile.write(getSyms())
-			return
-		
-		elif url.path=='/obv.json':
-			self.send_response(200)
-			self.end_headers()
-			self.wfile.write(getObv(parse_qs(url.query)))
+			self.wfile.write(urls[url.path](parse_qs(url.query)))
 			return
 		
 		else:

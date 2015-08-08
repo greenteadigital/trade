@@ -42,3 +42,20 @@ input#volmult {
 .histo {
 	opacity: 0.4
 }
+.hist.pos {
+	stroke: black;
+	fill: black;
+}
+.histo.neg {
+	stroke: #c00;
+	fill: #c00;
+}
+.points {
+	stroke: orange;
+	fill: blue;
+	stroke-width: 2;
+}
+
+
+
+

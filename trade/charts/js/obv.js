@@ -46,12 +46,9 @@ function buildObv(data) {
 				.append("circle")
 				.attr("cx", function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
 				.attr("cy", function(d) { return y(d.OBV * yExaggerate) })
-				.attr("r", 3)
-				.attr("stroke", "orange")
-				.attr("stroke-width", 2)
-				.attr("fill", "blue")
+				.attr("r", 2)
 				.attr("title", function(d) { return d.Date + " OBV: " + d.OBV + "" })
-				.attr("class", "obvPoints");
+				.attr("class", "points");
 		} else {
 			points.remove();
 		}
