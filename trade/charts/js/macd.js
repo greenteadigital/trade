@@ -94,7 +94,7 @@ var buildMacd = function(data) {
 				.attr("cy", function(d) { return y(d.Sig * yExaggerate) })
 				.attr("r", 2)
 				.attr("title", function(d) { return d.Date + " Signal: " + d.Sig + "" })
-				.attr("class","points");
+				.attr("class","sigPoints point");
 		} else {
 			points.remove();
 		}
@@ -114,7 +114,7 @@ var buildMacd = function(data) {
 				.attr("stroke-width", 2)
 				.attr("fill", "black")
 				.attr("title", function(d) { return d.Date + " MACD: " + d.MACD + "" })
-				.attr("class", "macdPoints");
+				.attr("class", "macdPoints point");
 		} else {
 			points.remove();
 		}

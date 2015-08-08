@@ -53,7 +53,7 @@ d3.select("#sigPoints")
 });
 
 d3.select("#macdHisto")
-.on("click", function() {
-	macdHisto = d3.event.target.checked;
-	drawMacdHisto();
+	.on("click", function() {
+		macdHisto = d3.event.target.checked;
+		drawMacdHisto();
 });

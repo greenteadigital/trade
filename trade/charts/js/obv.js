@@ -48,7 +48,7 @@ function buildObv(data) {
 				.attr("cy", function(d) { return y(d.OBV * yExaggerate) })
 				.attr("r", 2)
 				.attr("title", function(d) { return d.Date + " OBV: " + d.OBV + "" })
-				.attr("class", "points");
+				.attr("class", "obvPoints point");
 		} else {
 			points.remove();
 		}

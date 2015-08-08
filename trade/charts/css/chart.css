@@ -50,7 +50,7 @@ input#volmult {
 	stroke: #c00;
 	fill: #c00;
 }
-.points {
+.point {
 	stroke: orange;
 	fill: blue;
 	stroke-width: 2;
