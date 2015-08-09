@@ -55,7 +55,12 @@ input#volmult {
 	fill: blue;
 	stroke-width: 2;
 }
-
-
+.historyBar {
+	stroke: blue;
+	fill: blue;
+}
+.historyBar:hover {
+	fill: white;
+}
 
 

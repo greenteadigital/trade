@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="/charts/js/lib/d3.js" charset="utf-8"></script>
+		<script type="text/javascript" src="/charts/js/common.js"></script>
+		<link rel="stylesheet" type="text/css" href="/charts/css/chart.css">
+		<title>Data History</title>
+	</head>
+	<body>
+		<div id="histChart"></div>
+		
+		<script type="text/javascript">
+		
+		var draw = function(data) {
+			
+			var barWidth = 6,
+			barSpacing = 3;
+			
+			var x = d3.scale.linear()
+				.domain([0, data.length])
+				.range([margin, data.length * barWidth + barSpacing]);
+			
+			var maxD = data[0][Object.keys(data[0])[0]],
+			minD = data[data.length-1][Object.keys(data[data.length-1])[0]];			
+			
+			var y = d3.scale.linear()
+				.domain([minD, maxD])
+				.range([cheight - margin, margin]);
+			
+			d3.selectAll("#histChart")
+				.append("svg")
+				.attr("width", data.length * barWidth + barSpacing)
+				.attr("height", cheight - 2*margin)
+				.selectAll("rect")
+				.data(data)
+				.enter()
+				.append("rect")
+				.attr("x", function(d, i) { return x(i) + barSpacing })
+				.attr("y", function(d) { return  y(d[Object.keys(d)[0]])})
+				.attr("height", function(d) { return cheight - y(d[Object.keys(d)[0]]) })
+				.attr("width", barWidth)
+				.attr("class", "historyBar")
+				.attr("title", function(d) { return Object.keys(d)[0] + " " + d[Object.keys(d)[0]] + ''});
+		}
+		
+		d3.json(dataServer + '/history.json', draw);
+		
+		</script>
+	</body>
+</html>

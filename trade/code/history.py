@@ -1,21 +1,34 @@
 import csv
 import json
 import os
-from setuptools.command.easy_install import update_dist_caches
 
 SRC = r".\data\csv"
 
+def numLines(fname):
+    with open(fname) as f:
+        for count, line in enumerate(f, 1):
+            pass
+    return count
+
 def getHistory(*args):
 	hfile = r".\data\json\history.json"
+	
+	# Set the files [a|m]time back to epoch to force rewrite of hfile.
+	#os.utime(hfile, (0,0))
+	
 	base = os.path.getmtime(hfile)
 	newer = filter(lambda f: os.path.getmtime(os.path.join(SRC, f)) > base, os.listdir(SRC))
 	
 	if newer:
-		hist = json.load(open(hfile,'rb'))
-		for f in map(lambda f: f.split('.')[0][1:], newer):
-			hist[f] = len(open(os.path.join(SRC, "_" + f + '.csv'), 'rb').readlines()) - 1
-		update = json.dumps(hist)
+		hist = json.load(open(hfile,'rb')) # = [ {"A": 999}, {"Z": 234}, {"MM": 777} ... ]
+		
+		for symbol in map(lambda f: f.split('.')[0][1:], newer):
+			count = numLines(os.path.join(SRC, "_" + symbol + '.csv')) - 1
+			map(lambda d: d.update((k, count) for k,v in d.items() if k == symbol), hist)
+		
+		update = json.dumps(map(lambda t: dict(t), sorted(hist, key=lambda x: x.values()[0], reverse=True)))
 		open(hfile,'wb').write(update)
 		return update
+	
 	else:
 		return open(hfile, 'rb').read()
