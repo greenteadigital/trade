@@ -31,11 +31,11 @@
 	
 	<script type="text/javascript">
 		
-	var daysPerCandle = 5;
-	var yTicks = 10;
-	var volmult = 0.000001;
-	var symbolsLoaded = false;
-	var candleData;
+	var daysPerCandle = 5,
+	yTicks = 10,
+	volmult = 0.000001,
+	symbolsLoaded = false,
+	candleData;
 
 	function aggregate(eod) {
 		if (typeof candleData === 'undefined') { candleData = eod }
@@ -65,12 +65,17 @@
 		} else {
 			buildCandles(candleData);			
 		}
+		
+		d3.select("title")
+			.html(function() {
+				return location.hash.substr(1) + ' from ' + candleData[candleData.length - 1].Date
+				});
 	}
 	
 	function fetchData() {
 		
 		if (symbolsLoaded == false) {
-			d3.json(dataServer + '/symbols.json', function(d) {
+			d3.json(dataServer + '/symbols.json?order=biggest', function(d) {
 				var dropdown = d3.select("#symselect")
 				
 				dropdown.selectAll("option")
@@ -82,7 +87,7 @@
 				dropdown.select("option[selected=selected]")
 					.attr("selected", null);
 				
-				dropdown.select("option[value=" + window.location.hash.replace('#','') + "]")
+				dropdown.select("option[value=" + location.hash.substr(1) + "]")
 					.attr("selected", "selected");
 				
 			});
@@ -90,7 +95,7 @@
 		}
 		
 		if (typeof candleData === 'undefined') {			
-			d3.csv(dataServer + '/data/csv/' + '_' + window.location.hash.replace('#','') + '.csv', aggregate);
+			d3.csv(dataServer + '/data/csv/_' + location.hash.substr(1) + '.csv', aggregate);
 		} else	{
 			aggregate(candleData);
 		}
@@ -99,14 +104,14 @@
 				+ '/macd.json'
 				+ '?fast=' + fast
 				+ '&slow=' + slow
-				+ '&symbol=' + window.location.hash.replace('#','')
+				+ '&symbol=' + location.hash.substr(1)
 				+ '&signal=' + signal
 				+ '&dpc=' + daysPerCandle,
 				buildMacd);
 		
 		d3.json(dataServer
 				+ '/obv.json'
-				+ '?symbol=' + window.location.hash.replace('#','')
+				+ '?symbol=' + location.hash.substr(1)
 				+ '&dpc=' + daysPerCandle,
 				buildObv);
 	}
