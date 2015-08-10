@@ -60,6 +60,7 @@ input#volmult {
 	fill: blue;
 }
 .historyBar:hover {
+	stroke: red;
 	fill: white;
 }
 

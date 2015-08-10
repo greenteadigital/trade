@@ -13,12 +13,12 @@
 		
 		var draw = function(data) {
 			
-			var barWidth = 6,
-			barSpacing = 3;
+			var barWidth = 8,
+			barSpacing = 4;
 			
 			var x = d3.scale.linear()
 				.domain([0, data.length])
-				.range([margin, data.length * barWidth + barSpacing]);
+				.range([margin, data.length * (barWidth + barSpacing) + barWidth - margin]);
 			
 			var maxD = data[0][Object.keys(data[0])[0]],
 			minD = data[data.length-1][Object.keys(data[data.length-1])[0]];			
@@ -29,13 +29,15 @@
 			
 			d3.selectAll("#histChart")
 				.append("svg")
-				.attr("width", data.length * barWidth + barSpacing)
-				.attr("height", cheight - 2*margin)
-				.selectAll("rect")
+				.attr("width", data.length * (barWidth + barSpacing) + barWidth)
+				.attr("height", cheight)
+				.selectAll("a")
 				.data(data)
 				.enter()
+				.append("a")
+				.attr("xlink:href", function(d) { return "./#" + Object.keys(d)[0] })
 				.append("rect")
-				.attr("x", function(d, i) { return x(i) + barSpacing })
+				.attr("x", function(d, i) { return x(i) })
 				.attr("y", function(d) { return  y(d[Object.keys(d)[0]])})
 				.attr("height", function(d) { return cheight - y(d[Object.keys(d)[0]]) })
 				.attr("width", barWidth)
