@@ -10,40 +10,82 @@
 		<div id="histChart"></div>
 		
 		<script type="text/javascript">
+		var params = queryParams();
 		
 		var draw = function(data) {
 			
 			var barWidth = 8,
-			barSpacing = 4
+			barSpacing = 4,
+			margin = 10,
 			keys = Object.keys;
 			
-			var x = d3.scale.linear()
+			function horizontal() {
+				
+				var y = d3.scale.linear()
 				.domain([0, data.length])
 				.range([margin, data.length * (barWidth + barSpacing) + barWidth - margin]);
 			
-			var maxD = data[0][keys(data[0])[0]],
-			minD = data[data.length-1][keys(data[data.length-1])[0]];			
+				var maxD = data[0][keys(data[0])[0]],
+				minD = data[data.length-1][keys(data[data.length-1])[0]];			
+				
+				var x = d3.scale.linear()
+					.domain([minD, maxD])
+					.range([margin, cwidth - 5*margin]);
+				
+				d3.selectAll("#histChart")
+					.append("svg")
+					.attr("width", cwidth - 2*margin)
+					.attr("height", data.length * (barWidth + barSpacing) + barWidth - margin)
+					.selectAll("a")
+					.data(data)
+					.enter()
+					.append("a")
+					.attr("xlink:href", function(d) { return "./#" + keys(d)[0] })
+					.append("rect")
+					.attr("y", function(d, i) { return y(i) })
+					.attr("x", margin)
+					.attr("width", function(d) { return x(d[keys(d)[0]]) })
+					.attr("height", barWidth)
+					.attr("class", "historyBar")
+					.attr("title", function(d) { return keys(d)[0] + " " + d[keys(d)[0]] + ''});
+			}
 			
-			var y = d3.scale.linear()
-				.domain([minD, maxD])
-				.range([cheight - margin, margin]);
+			function vertical() {
+				
+				var x = d3.scale.linear()
+				.domain([0, data.length])
+				.range([margin, data.length * (barWidth + barSpacing) + barWidth - margin]);
 			
-			d3.selectAll("#histChart")
-				.append("svg")
-				.attr("width", data.length * (barWidth + barSpacing) + barWidth)
-				.attr("height", cheight)
-				.selectAll("a")
-				.data(data)
-				.enter()
-				.append("a")
-				.attr("xlink:href", function(d) { return "./#" + keys(d)[0] })
-				.append("rect")
-				.attr("x", function(d, i) { return x(i) })
-				.attr("y", function(d) { return  y(d[keys(d)[0]])})
-				.attr("height", function(d) { return cheight - y(d[keys(d)[0]]) })
-				.attr("width", barWidth)
-				.attr("class", "historyBar")
-				.attr("title", function(d) { return keys(d)[0] + " " + d[keys(d)[0]] + ''});
+				var maxD = data[0][keys(data[0])[0]],
+				minD = data[data.length-1][keys(data[data.length-1])[0]];			
+				
+				var y = d3.scale.linear()
+					.domain([minD, maxD])
+					.range([cheight - margin, margin]);
+				
+				d3.selectAll("#histChart")
+					.append("svg")
+					.attr("width", data.length * (barWidth + barSpacing) + barWidth)
+					.attr("height", cheight)
+					.selectAll("a")
+					.data(data)
+					.enter()
+					.append("a")
+					.attr("xlink:href", function(d) { return "./#" + keys(d)[0] })
+					.append("rect")
+					.attr("x", function(d, i) { return x(i) })
+					.attr("y", function(d) { return  y(d[keys(d)[0]])})
+					.attr("height", function(d) { return cheight - y(d[keys(d)[0]]) })
+					.attr("width", barWidth)
+					.attr("class", "historyBar")
+					.attr("title", function(d) { return keys(d)[0] + " " + d[keys(d)[0]] + ''});
+			}
+			
+			if (params.o === 'h') {
+				horizontal();
+			} else if (params.o === 'v') {
+				vertical();
+			}
 		}
 		
 		d3.json(dataServer + '/history.json', draw);

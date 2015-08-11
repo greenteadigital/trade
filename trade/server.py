@@ -15,6 +15,9 @@ urls = {'/macd.json': getMacd,
 		'/obv.json': getObv,
 		'/history.json': getHistory}
 
+cacheable = ['/history.json']
+cache = {}
+
 class CustomHandler(SimpleHTTPRequestHandler):
 	
 	def end_headers(self):
@@ -27,7 +30,13 @@ class CustomHandler(SimpleHTTPRequestHandler):
 		if url.path in urls:
 			self.send_response(200)
 			self.end_headers()
-			self.wfile.write(urls[url.path](parse_qs(url.query)))
+			if url.path in cacheable:
+				if url.path in cache:
+					self.wfile.write(cache[url.path])
+				else:
+					cache[url.path] = urls[url.path](parse_qs(url.query))
+			else:
+				self.wfile.write(urls[url.path](parse_qs(url.query)))
 			return
 		
 		else:
