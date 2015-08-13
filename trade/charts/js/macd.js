@@ -9,7 +9,7 @@ sigPoints = false;
 var buildMacd = function(data) {
 
 	var height = zoomMult * 250;
-	var width = zoomMult * d3.max([(data.length + (+slow) + (+signal)) * daysPerCandle, cwidth]);
+	var width = d3.select("#candleSvg").attr("width");
 	var macdVals = data.map(function(d) { return d.MACD; })
 	var yExaggerate = 10;
 	var interp = "monotone";

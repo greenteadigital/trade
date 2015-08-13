@@ -5,15 +5,15 @@
 	<script type="text/javascript" src="/charts/js/candles.js"></script>
 	<script type="text/javascript" src="/charts/js/macd.js"></script>
 	<script type="text/javascript" src="/charts/js/obv.js"></script>
-	<script type="text/javascript" src="/charts/js/common.js"></script>
+	<script type="text/javascript" src="/charts/js/const.js"></script>
 	<link rel="stylesheet" type="text/css" href="/charts/css/chart.css">
 	<title>EOD OHLC Candles</title>
   </head>
   <body>
 	<div class="ctrls">
-		<label for="daysPer">Days/Candle: </label><input type="number" value="5" id="daysPer"/>
+		<label for="daysPer">Days/Candle: </label><input type="number" value="1" id="daysPer"/>
 		<label for="zoom">Zoom: </label><input type="range" max="2.5" value="1" min="0.4" step="0.025" id="zoom"/>
-		<label for="volmult">Volume: </label><input type="range" max="0.01" value="0.00001" min="0.00000001" step="0.000001" id="volmult"/>
+		<label for="volmult">Volume: </label><input type="range" max="0.001" value="0.00001" min="0.0000001" step="0.0000001" id="volmult"/>
 		<select id="symselect"></select>
 	</div>
 	<br/>
@@ -31,7 +31,7 @@
 	
 	<script type="text/javascript">
 		
-	var daysPerCandle = 5,
+	var daysPerCandle = 1,
 	yTicks = 10,
 	volmult = 0.000001,
 	symbolsLoaded = false,

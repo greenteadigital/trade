@@ -10,10 +10,12 @@ from history import getHistory	#@UnresolvedImport
 
 PORT = 80
 
-urls = {'/macd.json': getMacd,
+dynurls = {'/macd.json': getMacd,
 		'/symbols.json': getSyms,
 		'/obv.json': getObv,
 		'/history.json': getHistory}
+
+# staturls = []
 
 cacheable = ['/history.json']
 cache = {}
@@ -27,18 +29,17 @@ class CustomHandler(SimpleHTTPRequestHandler):
 	def do_GET(self):
 		url = urlparse(self.path)
 		
-		if url.path in urls:
+		if url.path in dynurls:
 			self.send_response(200)
 			self.end_headers()
+			
 			if url.path in cacheable:
 				if url.path in cache:
 					self.wfile.write(cache[url.path])
 				else:
-					cache[url.path] = urls[url.path](parse_qs(url.query))
+					cache[url.path] = dynurls[url.path](parse_qs(url.query))
 			else:
-				self.wfile.write(urls[url.path](parse_qs(url.query)))
-			return
-		
+				self.wfile.write(dynurls[url.path](parse_qs(url.query)))
 		else:
 			SimpleHTTPRequestHandler.do_GET(self)
 

@@ -2,7 +2,7 @@ var obvPoints = false
 
 function buildObv(data) {
 	var height = zoomMult * 250;
-	var width = zoomMult * d3.max([data.length * daysPerCandle, cwidth]);
+	var width = d3.select("#candleSvg").attr("width");
 	var obvVals = data.map(function(d) { return d.OBV } )
 	var yExaggerate = 1;
 	var interp = "linear";

@@ -19,7 +19,7 @@ input[type=range] {
    	width: 4em;
 }
 input#volmult {
-   	width: 6em;
+   	width: 9em;
 }
 .volumeBar {
 	opacity: 0.35;

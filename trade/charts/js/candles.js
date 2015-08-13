@@ -1,20 +1,25 @@
 
 var buildCandles = function(data) {
 
-	var width = zoomMult * d3.max([data.length * daysPerCandle, cwidth]);
+	var width = zoomMult * d3.max([data.length * (candleWidth + candleSpacing), cwidth]);
 	var height = zoomMult * cheight;
+	
 	
 	var chart = d3.select("div.candlesticks")
 		.append("svg")
 		.attr("width", width)
-		.attr("height", height);
+		.attr("height", height)
+		.attr("id", "candleSvg");
 	
 	var gridLayer = chart.append("g");
 	var volumeLayer = chart.append("g");
 	var candleLayer = chart.append("g");
 	
+	var minY = d3.min(data.map(function(d) { return +d.Low; }));
+	var maxY = d3.max(data.map(function(d) { return +d.High; }))
+	
 	var y = d3.scale.linear()
-		.domain([0, d3.max(data.map(function(d) { return +d.High; }))])
+		.domain([0.99*minY, 1.01*maxY])
 		.range([height - margin, margin]);
 	
 	var x = d3.scale.linear()
@@ -66,8 +71,7 @@ var buildCandles = function(data) {
 		.text(String);
 
 	function setClass(d) { return +d.Close > +d.Open ? "up" : "down" }
-	function setWickX(d, i) { return x(i) }
-	function getRectWidth(d) { return (0.5 * (width - 2*margin) / data.length).toFixed(4) }
+	function setWickX(d, i) { return x(i) - (candleWidth/2.0) - candleSpacing }
 	
 	// draw volume
 	drawVolume = function() {
@@ -76,10 +80,11 @@ var buildCandles = function(data) {
 		
 		volume.enter()
 			.append("rect")
-			.attr("x", function(d, i) { return x(i) - getRectWidth()/2 })
+			.attr("x", function(d, i) { return x(i) - (candleWidth + candleSpacing) })
 			.attr("y", function(d) { return height - margin - +d.Volume*volmult/daysPerCandle })
 			.attr("height", function(d) { return +d.Volume*volmult/daysPerCandle })
-			.attr("width", getRectWidth)
+			//.attr("width", getRectWidth)
+			.attr("width", candleWidth)
 			.attr("class", function(d) { return "volumeBar " + setClass(d) })
 			.attr("title", function(d) { return d.Date + " Vol: " + d.Volume });
 	}
@@ -100,10 +105,10 @@ var buildCandles = function(data) {
 	
 	// draw candles
 	candle.append("rect")
-		.attr("x", function(d, i) { return x(i) - getRectWidth()/2 })
+		.attr("x", function(d, i) { return x(i) - (candleWidth + candleSpacing) })
 		.attr("y", function(d) { return y(d3.max([+d.Open, +d.Close])) })		  
 		.attr("height", function(d) { return d3.max([0.1, Math.abs(y(+d.Open) - y(+d.Close))]) })
-		.attr("width", getRectWidth)
+		.attr("width", candleWidth)
 		.attr("class", setClass)
 		.attr("title", function(d) {
 			return d.Date
