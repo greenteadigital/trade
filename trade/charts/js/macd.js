@@ -7,12 +7,13 @@ macdHisto = false,
 sigPoints = false;
 
 var buildMacd = function(data) {
-
-	var height = zoomMult * 250;
-	var width = d3.select("#candleSvg").attr("width");
-	var macdVals = data.map(function(d) { return d.MACD; })
-	var yExaggerate = 10;
-	var interp = "monotone";
+	
+	var data = data.slice(data.length - histDepth, data.length),
+	height = zoomMult * 250,
+	width = d3.select("#candleSvg").attr("width"),
+	macdVals = data.map(function(d) { return d.MACD; }),
+	yExaggerate = 100,
+	interp = "monotone";
 	
 	var chart = d3.select("div.macd")
 		.append("svg")
@@ -25,7 +26,7 @@ var buildMacd = function(data) {
 	var macdLayer = chart.append("g");
 	
 	var y = d3.scale.linear()
-		.domain([d3.min(macdVals) * yExaggerate, d3.max(macdVals) * yExaggerate])
+		.domain([d3.min(macdVals), d3.max(macdVals)])
 		.range([height-margin, 1]);
 		
 	gridLayer.selectAll(".macdZero")
@@ -39,7 +40,7 @@ var buildMacd = function(data) {
 		
 	var macdLine = d3.svg.line()
 		.x(function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
-		.y(function(d) { return y(d.MACD * yExaggerate); })
+		.y(function(d) { return y(d.MACD); })
 		.interpolate(interp);
 		
 	macdLayer.append("path")
@@ -51,7 +52,7 @@ var buildMacd = function(data) {
 		
 	var sigLine = d3.svg.line()
 		.x(function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
-		.y(function(d) { return y(d.Sig * yExaggerate); })
+		.y(function(d) { return y(d.Sig); })
 		.interpolate(interp);
 		
 	sigLayer.append("path")
@@ -60,8 +61,6 @@ var buildMacd = function(data) {
 		.attr("stroke-width", 1)
 		.attr("fill", "none")
 		.attr("class", "sigPath");
-	
-	function getRectWidth(d) { return (0.5 * (width - 2*margin) / data.length).toFixed(4) }
 	
 	drawMacdHisto = function() {
 		var histo = gridLayer.selectAll(".histo");
@@ -73,11 +72,11 @@ var buildMacd = function(data) {
 				.attr("x", function(d) { return d3.select("#candle"+d.Date).attr("x1") })
 				.attr("y", function(d) {
 					var s = d3.select(".macdZero").attr("y1");
-					return d.MACD < d.Sig ? s : s - (d.d * yExaggerate * 1.5);
+					return d.MACD < d.Sig ? s : s - (d.d * yExaggerate);
 					})
-				.attr("width", getRectWidth)
-				.attr("height", function(d) { return d.d * yExaggerate * 1.5 })
-				.attr("class", function(d) { return d.MACD < d.Sig ? "histo pos" : "histo neg" });
+				.attr("width", candleWidth)
+				.attr("height", function(d) { return d.d * yExaggerate })
+				.attr("class", function(d) { return d.MACD < d.Sig ? "histo neg" : "histo pos" });
 		} else {
 			histo.remove();
 		}
@@ -91,7 +90,7 @@ var buildMacd = function(data) {
 				.enter()
 				.append("circle")
 				.attr("cx", function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
-				.attr("cy", function(d) { return y(d.Sig * yExaggerate) })
+				.attr("cy", function(d) { return y(d.Sig) })
 				.attr("r", 2)
 				.attr("title", function(d) { return d.Date + " Signal: " + d.Sig + "" })
 				.attr("class","sigPoints point");
@@ -108,7 +107,7 @@ var buildMacd = function(data) {
 				.enter()
 				.append("circle")
 				.attr("cx", function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
-				.attr("cy", function(d) { return y(d.MACD * yExaggerate) })
+				.attr("cy", function(d) { return y(d.MACD) })
 				.attr("r", 2)
 				.attr("stroke", "orange")
 				.attr("stroke-width", 2)

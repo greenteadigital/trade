@@ -2,10 +2,10 @@
 <html>
   <head>
 	<script type="text/javascript" src="/charts/js/lib/d3.js" charset="utf-8"></script>
-	<script type="text/javascript" src="/charts/js/candles.js"></script>
-	<script type="text/javascript" src="/charts/js/macd.js"></script>
-	<script type="text/javascript" src="/charts/js/obv.js"></script>
 	<script type="text/javascript" src="/charts/js/const.js"></script>
+	<script type="text/javascript" src="/charts/js/candles.js"></script>
+	<script type="text/javascript" src="/charts/js/obv.js"></script>
+	<script type="text/javascript" src="/charts/js/macd.js"></script>
 	<link rel="stylesheet" type="text/css" href="/charts/css/chart.css">
 	<title>EOD OHLC Candles</title>
   </head>
@@ -38,7 +38,7 @@
 	candleData;
 
 	function aggregate(eod) {
-		if (typeof candleData === 'undefined') { candleData = eod }
+		if (typeof candleData === 'undefined') { candleData = eod.slice(0, histDepth) }
 		
 		if (daysPerCandle > 1) {
 			var out = [],

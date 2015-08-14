@@ -1,11 +1,13 @@
 var obvPoints = false
 
 function buildObv(data) {
-	var height = zoomMult * 250;
-	var width = d3.select("#candleSvg").attr("width");
-	var obvVals = data.map(function(d) { return d.OBV } )
-	var yExaggerate = 1;
-	var interp = "linear";
+	
+	var data = data.slice(data.length - histDepth, data.length),
+	height = zoomMult * 250,
+	width = d3.select("#candleSvg").attr("width"),
+	obvVals = data.map(function(d) { return d.OBV } ),
+	yExaggerate = 1,
+	interp = "linear";
 	
 	var chart = d3.select("div.obv")
 		.append("svg")
