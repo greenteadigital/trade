@@ -1,9 +1,15 @@
-var obvPoints = false
+var obvPoints = false,
+fullObvData;
+
+//TODO: create aggregateObv function
 
 function buildObv(data) {
 	
-	var data = data.slice(data.length - histDepth, data.length),
-	height = zoomMult * 250,
+	if (data.length > histDepth) {
+		var data = data.slice(data.length - histDepth, data.length);
+	}
+
+	var height = 150,
 	width = d3.select("#candleSvg").attr("width"),
 	obvVals = data.map(function(d) { return d.OBV } ),
 	yExaggerate = 1,
@@ -20,7 +26,7 @@ function buildObv(data) {
 	
 	var y = d3.scale.linear()
 		.domain([d3.min(obvVals) * yExaggerate, d3.max(obvVals) * yExaggerate])
-		.range([height, 1]);
+		.range([height - 1, 1]);
 	
 	gridLayer.selectAll(".obvZero")
 		.data([0])
@@ -59,5 +65,14 @@ function buildObv(data) {
 	if (obvPoints) {
 		addObvPoints(data);
 	}
+	
+	d3.json(dataServer
+			+ '/macd.json'
+			+ '?fast=' + fast
+			+ '&slow=' + slow
+			+ '&symbol=' + location.hash.substr(1)
+			+ '&signal=' + signal
+			+ '&dpc=' + daysPerCandle,
+			buildMacd);
 
 }

@@ -1,5 +1,6 @@
+var log = console.log;
 
-function queryParams() {
+var queryParams = function() {
 	var out = {},
 	search = location.search.substr(1).split('&');
 	

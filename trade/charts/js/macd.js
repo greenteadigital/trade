@@ -8,11 +8,13 @@ sigPoints = false;
 
 var buildMacd = function(data) {
 	
-	var data = data.slice(data.length - histDepth, data.length),
-	height = zoomMult * 250,
+	if (data.length > histDepth) {
+		var data = data.slice(data.length - histDepth, data.length);
+	}
+	var height = 150,
 	width = d3.select("#candleSvg").attr("width"),
 	macdVals = data.map(function(d) { return d.MACD; }),
-	yExaggerate = 100,
+	yExaggerate = 50,
 	interp = "monotone";
 	
 	var chart = d3.select("div.macd")

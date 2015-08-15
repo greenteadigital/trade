@@ -13,13 +13,6 @@ d3.select("#daysPer")
 		fetchData();
 	});
 
-d3.select("#zoom")
-	.on("input", function(d, i) {
-		d3.selectAll("svg").remove();
-		zoomMult = d3.event.target.valueAsNumber;
-		fetchData();
-	});
-
 d3.select("#volmult")
 	.on("input", function(d, i) {
 		volmult = d3.event.target.valueAsNumber;

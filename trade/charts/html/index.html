@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-	<script type="text/javascript" src="/charts/js/lib/d3.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/charts/js/lib/d3.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/charts/js/const.js"></script>
+	<script type="text/javascript" src="/charts/js/funcs.js"></script>
 	<script type="text/javascript" src="/charts/js/candles.js"></script>
 	<script type="text/javascript" src="/charts/js/obv.js"></script>
 	<script type="text/javascript" src="/charts/js/macd.js"></script>
@@ -12,7 +13,6 @@
   <body>
 	<div class="ctrls">
 		<label for="daysPer">Days/Candle: </label><input type="number" value="1" id="daysPer"/>
-		<label for="zoom">Zoom: </label><input type="range" max="2.5" value="1" min="0.4" step="0.025" id="zoom"/>
 		<label for="volmult">Volume: </label><input type="range" max="0.001" value="0.00001" min="0.0000001" step="0.0000001" id="volmult"/>
 		<select id="symselect"></select>
 	</div>
@@ -31,22 +31,29 @@
 	
 	<script type="text/javascript">
 		
-	var daysPerCandle = 1,
+	var daysPerCandle = d3.select("#daysPer").attr("value"),
+	histDepth,
 	yTicks = 10,
 	volmult = 0.000001,
 	symbolsLoaded = false,
-	candleData;
+	fullData;
 
 	function aggregate(eod) {
-		if (typeof candleData === 'undefined') { candleData = eod.slice(0, histDepth) }
+		
+		if (typeof fullData === 'undefined') {
+			fullData = eod;
+		}
+		
+		histDepth = Math.ceil((cwidth - (2 * margin)) / (candleWidth + candleSpacing)) * daysPerCandle
+		var candleData = fullData.slice(0, histDepth);
 		
 		if (daysPerCandle > 1) {
 			var out = [],
 			start = 0,
 			end = daysPerCandle;
 			
-			while (end <= eod.length) {
-				var chunk = eod.slice(start, end);
+			while (end <= candleData.length) {
+				var chunk = candleData.slice(start, end);
 				var agg = {
 					"Date": chunk[0].Date,
 					"Open": +chunk[chunk.length - 1].Open, 
@@ -94,26 +101,11 @@
 			symbolsLoaded = true;
 		}
 		
-		if (typeof candleData === 'undefined') {			
+		if (typeof fullData === 'undefined') {			
 			d3.csv(dataServer + '/data/csv/_' + location.hash.substr(1) + '.csv', aggregate);
 		} else	{
-			aggregate(candleData);
+			aggregate(fullData);
 		}
-		
-		d3.json(dataServer
-				+ '/macd.json'
-				+ '?fast=' + fast
-				+ '&slow=' + slow
-				+ '&symbol=' + location.hash.substr(1)
-				+ '&signal=' + signal
-				+ '&dpc=' + daysPerCandle,
-				buildMacd);
-		
-		d3.json(dataServer
-				+ '/obv.json'
-				+ '?symbol=' + location.hash.substr(1)
-				+ '&dpc=' + daysPerCandle,
-				buildObv);
 	}
 	</script>
 	<script type="text/javascript" src="/charts/js/events.js"></script>

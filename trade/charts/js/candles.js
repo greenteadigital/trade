@@ -1,8 +1,8 @@
 
 var buildCandles = function(data) {
 
-	var width = zoomMult * d3.max([data.length * (candleWidth + candleSpacing), cwidth]);
-	var height = zoomMult * cheight;
+	var width = cwidth;
+	var height = cheight;
 	
 	
 	var chart = d3.select("div.candlesticks")
@@ -24,17 +24,10 @@ var buildCandles = function(data) {
 	
 	var x = d3.scale.linear()
 		.domain([data.length, 0])
-		.range([margin, width - margin]);
-	
-	var dates = data.map(function(d) {return new Date(d.Date)});
-	var first = d3.min(dates);
-	var last = d3.max(dates);
-	var days = (last.getTime() - first.getTime())/1000/60/60/24;
-	
-	var xTicks = width/100;
+		.range([width - margin - (data.length * candleWidth) - ((data.length - 1) * candleSpacing), width - margin]);
 	
 	gridLayer.selectAll("line.xTick")
-		.data(x.ticks(xTicks))
+		.data(x.ticks())
 		.enter().append("line")
 		.attr("x1", x)
 		.attr("x2", x)
@@ -52,11 +45,11 @@ var buildCandles = function(data) {
 		.attr("stroke", "#ccc");
 
 	gridLayer.selectAll("text.xLabel")
-		.data(x.ticks(xTicks))
+		.data(x.ticks())
 		.enter().append("text")
 		.attr("x", x)
 		.attr("y", height - margin)
-		.attr("dy", 20)
+		//.attr("dy", 20)
 		.attr("text-anchor", "middle")
 		.text(function(d) { return d.Date; });
 
@@ -68,7 +61,7 @@ var buildCandles = function(data) {
 		.attr("dy", 5)
 		.attr("dx", 20)		 
 		.attr("text-anchor", "middle")
-		.text(String);
+		.text(function(d){ return d3.round(d, 2) });
 
 	function setClass(d) { return +d.Close > +d.Open ? "up" : "down" }
 	function setWickX(d, i) { return x(i) - (candleWidth/2.0) - candleSpacing }
@@ -118,4 +111,9 @@ var buildCandles = function(data) {
 			+ " C:" + d.Close
 			+ " V:" + d.Volume
 			});
+	
+	d3.json(dataServer
+			+ '/obv.json'
+			+ '?symbol=' + location.hash.substr(1),
+			buildObv);
 }
