@@ -1,6 +1,6 @@
 
 var buildCandles = function(data) {
-
+	
 	var width = cwidth;
 	var height = cheight;
 	
@@ -76,7 +76,6 @@ var buildCandles = function(data) {
 			.attr("x", function(d, i) { return x(i) - (candleWidth + candleSpacing) })
 			.attr("y", function(d) { return height - margin - +d.Volume*volmult/daysPerCandle })
 			.attr("height", function(d) { return +d.Volume*volmult/daysPerCandle })
-			//.attr("width", getRectWidth)
 			.attr("width", candleWidth)
 			.attr("class", function(d) { return "volumeBar " + setClass(d) })
 			.attr("title", function(d) { return d.Date + " Vol: " + d.Volume });
@@ -114,6 +113,8 @@ var buildCandles = function(data) {
 	
 	d3.json(dataServer
 			+ '/obv.json'
-			+ '?symbol=' + location.hash.substr(1),
+			+ '?symbol=' + location.hash.substr(1)
+			+ '&depth=' + histDepth
+			+ '&dpc=' + daysPerCandle,
 			buildObv);
 }

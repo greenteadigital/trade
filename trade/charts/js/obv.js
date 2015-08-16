@@ -1,14 +1,13 @@
 var obvPoints = false,
 fullObvData;
 
-//TODO: create aggregateObv function
-
 function buildObv(data) {
 	
 	if (data.length > histDepth) {
 		var data = data.slice(data.length - histDepth, data.length);
 	}
-
+	log('histDepth ' + histDepth + '')
+	log('buildObv data.length ' + data.length +'');
 	var height = 150,
 	width = d3.select("#candleSvg").attr("width"),
 	obvVals = data.map(function(d) { return d.OBV } ),
