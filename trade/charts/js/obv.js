@@ -6,8 +6,7 @@ function buildObv(data) {
 	if (data.length > histDepth) {
 		var data = data.slice(data.length - histDepth, data.length);
 	}
-	log('histDepth ' + histDepth + '')
-	log('buildObv data.length ' + data.length +'');
+
 	var height = 150,
 	width = d3.select("#candleSvg").attr("width"),
 	obvVals = data.map(function(d) { return d.OBV } ),
@@ -37,7 +36,12 @@ function buildObv(data) {
 		.attr("class", "obvZero");
 	
 	var obvLine = d3.svg.line()
-		.x(function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
+		.x(function(d) { var selStr = "#candle"+d.Date;
+			//log(selStr)
+			var sel = d3.select(selStr);
+			//log(sel);
+			return sel.attr("x1");
+			})
 		.y(function(d) { return y(d.OBV * yExaggerate); })
 		.interpolate(interp);
 		
@@ -71,6 +75,7 @@ function buildObv(data) {
 			+ '&slow=' + slow
 			+ '&symbol=' + location.hash.substr(1)
 			+ '&signal=' + signal
+			+ '&depth=' + histDepth
 			+ '&dpc=' + daysPerCandle,
 			buildMacd);
 

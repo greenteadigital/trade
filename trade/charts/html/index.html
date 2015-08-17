@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-	<script type="text/javascript" src="/charts/js/lib/d3.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/charts/js/lib/d3.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/charts/js/const.js"></script>
 	<script type="text/javascript" src="/charts/js/funcs.js"></script>
 	<script type="text/javascript" src="/charts/js/candles.js"></script>
@@ -35,50 +35,9 @@
 	yTicks = 10,
 	volmult = 0.000001,
 	symbolsLoaded = false,
-	histDepth,
+	histDepth = getHistDepth(),
 	fullData;
 
-	function aggregate(eod) {
-		
-		if (typeof fullData === 'undefined') {
-			fullData = eod;
-		}
-		
-		histDepth = Math.ceil((cwidth - (2 * margin)) / (candleWidth + candleSpacing)) * daysPerCandle
-		var candleData = fullData.slice(0, histDepth);
-
-		if (daysPerCandle > 1) {
-			var out = [],
-			start = 0,
-			end = daysPerCandle;
-			
-			while (end < candleData.length) {
-				var chunk = candleData.slice(start, end);
-				var agg = {
-					"Date": chunk[0].Date,
-					"Open": +chunk[chunk.length - 1].Open, 
-					"High": d3.max(chunk.map(function(d) { return +d.High })),
-					"Low": d3.min(chunk.map(function(d) { return +d.Low })),
-					"Close": +chunk[0].Close,
-					"Volume": d3.sum(chunk.map(function(d) { return +d.Volume })),
-					//"Adj Close": chunk[0]["Adj Close"]
-					}
-				out.push(agg);
-				
-				start = end;
-				end = start + daysPerCandle;
-			}
-			buildCandles(out);
-		} else {
-			buildCandles(candleData);			
-		}
-		
-		d3.select("title")
-			.html(function() {
-				return location.hash.substr(1) + ' from ' + candleData[candleData.length - 1].Date
-				});
-	}
-	
 	function fetchData() {
 		
 		if (symbolsLoaded == false) {
@@ -101,11 +60,13 @@
 			symbolsLoaded = true;
 		}
 		
-		if (typeof fullData === 'undefined') {			
-			d3.csv(dataServer + '/data/csv/_' + location.hash.substr(1) + '.csv', aggregate);
-		} else	{
-			aggregate(fullData);
-		}
+
+		d3.json(dataServer + '/eod.json'
+				+ '?symbol=' + location.hash.substr(1)
+				+ '&depth=' + histDepth
+				+ '&dpc=' + daysPerCandle,
+				buildCandles);
+
 	}
 	</script>
 	<script type="text/javascript" src="/charts/js/events.js"></script>

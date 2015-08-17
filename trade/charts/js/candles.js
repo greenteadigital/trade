@@ -23,7 +23,7 @@ var buildCandles = function(data) {
 		.range([height - margin, margin]);
 	
 	var x = d3.scale.linear()
-		.domain([data.length, 0])
+		.domain([0, data.length])
 		.range([width - margin - (data.length * candleWidth) - ((data.length - 1) * candleSpacing), width - margin]);
 	
 	gridLayer.selectAll("line.xTick")

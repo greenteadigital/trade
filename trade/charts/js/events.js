@@ -10,6 +10,7 @@ d3.select("#daysPer")
 	.on("change", function(d, i) {
 		d3.selectAll("svg").remove();
 		daysPerCandle = d3.event.target.valueAsNumber;
+		histDepth = getHistDepth();
 		fetchData();
 	});
 

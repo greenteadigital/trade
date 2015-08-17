@@ -49,10 +49,12 @@ def getObv(params):
 	dpc = int(params['dpc'][0])
 	
 	lst = list(csv.DictReader(open(SRC + r"\_" + symbol + ".csv", 'rb')))
-	lst.reverse()
-	
+	lst.reverse()	# flip to timeline order, oldest first
+	if depth < len(lst):
+		lst = lst[len(lst) - depth:]
+		
 	if dpc > 1:
-		return json.dumps(aggregate(dpc, lst[:depth]))
+		return json.dumps(aggregate(dpc, lst))
 	
 	elif dpc == 1:
 		out = []

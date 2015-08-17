@@ -12,3 +12,7 @@ var queryParams = function() {
 	}
 	return out;
 }
+
+var getHistDepth = function() {
+	return Math.ceil((cwidth - (2 * margin)) / (candleWidth + candleSpacing)) * daysPerCandle;
+}

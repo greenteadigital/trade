@@ -7,13 +7,17 @@ from macd import getMacd	#@UnresolvedImport
 from symbols import getSyms	#@UnresolvedImport
 from obv import getObv	#@UnresolvedImport
 from history import getHistory	#@UnresolvedImport
+from eod import getEod	#@UnresolvedImport
 
 PORT = 80
 
-dynurls = {'/macd.json': getMacd,
+dynurls = {
+		'/macd.json': getMacd,
 		'/symbols.json': getSyms,
 		'/obv.json': getObv,
-		'/history.json': getHistory}
+		'/history.json': getHistory,
+		'/eod.json' : getEod
+		}
 
 # staturls = []
 

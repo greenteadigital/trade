@@ -7,5 +7,5 @@ g = d.getElementsByTagName('body')[0],
 cwidth = w.innerWidth || e.clientWidth || g.clientWidth,
 cheight = w.innerHeight|| e.clientHeight|| g.clientHeight,
 margin = 35,
-candleWidth = 4,
+candleWidth = 3,
 candleSpacing = candleWidth * 0.75;
