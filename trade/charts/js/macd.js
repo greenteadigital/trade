@@ -41,7 +41,12 @@ var buildMacd = function(data) {
 		.attr("class", "macdZero");
 		
 	var macdLine = d3.svg.line()
-		.x(function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
+		.x(function(d) { var selStr = "#candle"+d.Date;
+			//log(selStr)
+			var sel = d3.select(selStr);
+			//log(sel);
+			return sel.attr("x1");
+			})
 		.y(function(d) { return y(d.MACD); })
 		.interpolate(interp);
 		

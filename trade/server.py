@@ -42,6 +42,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
 					self.wfile.write(cache[url.path])
 				else:
 					cache[url.path] = dynurls[url.path](parse_qs(url.query))
+					self.wfile.write(cache[url.path])
 			else:
 				self.wfile.write(dynurls[url.path](parse_qs(url.query)))
 		else:

@@ -86,8 +86,10 @@ def getMacd(params):
 	
 	lst = list(csv.DictReader(open(SRC + r"\_" + symbol + ".csv", 'rb')))
 	lst.reverse()	# reverse rows to be in timeline (earliest -> most) recent order
-	if depth < len(lst):
-		lst = lst[len(lst) - depth:]
+	
+	fdepth = depth + ((slow + signal) * dpc) 
+	if fdepth < len(lst):
+		lst = lst[len(lst) - fdepth:]
 	
 	rows = []
 	for row in lst:
