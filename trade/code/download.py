@@ -8,7 +8,7 @@ import sys
 import zlib
 from cStringIO import StringIO as strio
 
-PROJ_DIR = r'C:\Users\Ben\eclipse-workspace\Trading\web'
+PROJ_DIR = r'C:\Users\Ben\eclipse-workspace\trade'
 FTP_DIR = os.path.join(PROJ_DIR, r'data\ftp')
 DB_DIR = os.path.join(PROJ_DIR, r'data\sqlite')
 CSV_DIR = os.path.join(PROJ_DIR, r'data\csv')
