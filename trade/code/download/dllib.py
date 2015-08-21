@@ -8,7 +8,8 @@ import zlib
 PROJ_DIR = os.path.join(os.environ['HOME'], r'eclipse-workspace\trade')
 FTP_DIR = os.path.join(PROJ_DIR, r'data\ftp')
 DB_DIR = os.path.join(PROJ_DIR, r'data\sqlite')
-CSV_DIR = os.path.join(PROJ_DIR, r'data\eod-csv')
+EOD_DIR = os.path.join(PROJ_DIR, r'data\eod-csv')
+SPLIT_DIR = os.path.join(PROJ_DIR, r'data\divs-splits')
 
 def backupSymbols():
 	''' Backup current symbol files and download latest symbols from nasdaq ftp '''

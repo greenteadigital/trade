@@ -6,11 +6,6 @@ import sys
 import urllib2
 from cStringIO import StringIO as strio
 
-print dllib.CSV_DIR
-print dllib.DB_DIR
-print dllib.FTP_DIR
-sys.exit()
-
 # build URLs with symbols and intended date range
 # make requests to yahoo in round-robin fashion
 def downloadEodData():
@@ -24,13 +19,13 @@ def downloadEodData():
 	eodcurs = eodconn.cursor()
 	symselect = "select SYMBOL from nasdaqlisted union select NASDAQ_SYMBOL from otherlisted"
 	db_syms = map(lambda t: '_' + t[0], symcurs.execute(symselect).fetchall())
-	fs_syms = map(lambda n: n.split('.')[0], os.listdir(dllib.CSV_DIR))
+	fs_syms = map(lambda n: n.split('.')[0], os.listdir(dllib.EOD_DIR))
 	syms = filter(lambda i: i.isalpha(), map(lambda i: i.lstrip('_'), list(set(db_syms) - set(fs_syms))))
 	for symbol in syms:
 		print symbol
 		ip = ips[ips_curr_idx]
 		params = (ip, symbol)
-		url = "http://%s/table.csv?s=%s&a=0&b=1&c=1900&d=12&e=31&f=2099&g=d&ignore=.csv" % params 
+		url = "http://%s/table.csv?s=%s&a=0&b=1&c=1900&d=11&e=31&f=2099&g=d" % params 
 		loc = urllib2.Request(url)
 		loc.add_header('Accept-Encoding', 'gzip, deflate')
 		loc.add_header('Host', ip2host[ip])
@@ -38,7 +33,7 @@ def downloadEodData():
 		print 'requesting', url
 		try:
 			csv_txt = dllib.tryDecompress(opener.open(loc).read())
-			out = open(os.path.join(dllib.CSV_DIR, '_' + symbol + '.csv'), 'wb')
+			out = open(os.path.join(dllib.EOD_DIR, '_' + symbol + '.csv'), 'wb')
 		except urllib2.HTTPError as err:
 			sys.stderr.write(str(err))
 			sys.stderr.flush()
