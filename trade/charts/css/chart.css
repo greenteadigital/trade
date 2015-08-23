@@ -1,11 +1,3 @@
-.down {
-	stroke: #c00;
-	fill: #c00;
-}
-.up{
-	fill: white;
-	stroke: black;
-}
 svg {
 	/*shape-rendering: crispEdges;*/
 }
@@ -23,9 +15,6 @@ input#volmult {
 }
 .volumeBar {
 	opacity: 0.3;
-}
-.volumeBar.up {
-	fill: black;
 }
 #zoom, #volmult {
 	width:100px;

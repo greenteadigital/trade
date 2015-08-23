@@ -1,4 +1,5 @@
 var log = console.log,
+red = "#c00",
 dataServer = 'http://localhost',
 w = window,
 d = document,

@@ -63,7 +63,14 @@ var buildCandles = function(data) {
 		.attr("text-anchor", "middle")
 		.text(function(d){ return d3.round(d, 2) });
 
-	function setClass(d) { return +d.Close > +d.Open ? "up" : "down" }
+	function setColor(d, i) {
+		if (i > 0) {
+			return +d.Close > +data[i-1].Close ? "black" : red;
+		} else if (i == 0) {
+			return +d.Close > +d.Open ? "black" : red;
+		}
+	}
+
 	function setWickX(d, i) { return x(i) - (candleWidth/2.0) - candleSpacing }
 	
 	// draw volume
@@ -77,7 +84,8 @@ var buildCandles = function(data) {
 			.attr("y", function(d) { return height - margin - +d.Volume*volmult/daysPerCandle })
 			.attr("height", function(d) { return +d.Volume*volmult/daysPerCandle })
 			.attr("width", candleWidth)
-			.attr("class", function(d) { return "volumeBar " + setClass(d) })
+			.attr("class", "volumeBar")
+			.attr("fill", setColor)
 			.attr("title", function(d) { return d.Date + " Vol: " + d.Volume });
 	}
 	drawVolume();
@@ -92,7 +100,7 @@ var buildCandles = function(data) {
 		.attr("x2", setWickX)			
 		.attr("y1", function(d) { return y(+d.High) })
 		.attr("y2", function(d) { return y(+d.Low) })
-		.attr("class", setClass)
+		.attr("stroke", setColor)
 		.attr("id", function(d) { return "candle" + d.Date });
 	
 	// draw candles
@@ -101,7 +109,8 @@ var buildCandles = function(data) {
 		.attr("y", function(d) { return y(d3.max([+d.Open, +d.Close])) })		  
 		.attr("height", function(d) { return d3.max([0.1, Math.abs(y(+d.Open) - y(+d.Close))]) })
 		.attr("width", candleWidth)
-		.attr("class", setClass)
+		.attr("stroke", setColor)
+		.attr("fill", function(d, i) { return +d.Close > +d.Open  ? "white" : d3.select("#candle" + d.Date).attr("stroke") })
 		.attr("title", function(d) {
 			return d.Date
 			+ " O:" + d.Open
