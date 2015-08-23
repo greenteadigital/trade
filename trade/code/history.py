@@ -2,7 +2,7 @@ import csv
 import json
 import os
 
-SRC = r".\data\csv"
+SRC = r".\data\eod-csv"
 
 def numLines(fname):
 	with open(fname) as f:

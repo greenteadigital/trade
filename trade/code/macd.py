@@ -1,7 +1,8 @@
 import csv
 import json
+import chartlib
 
-SRC = r".\data\csv"
+SRC = r".\data\eod-csv"
 
 def aggregate(dpc, data):
 	out = []
@@ -85,11 +86,13 @@ def getMacd(params):
 	dpc = int(params['dpc'][0])
 	
 	lst = list(csv.DictReader(open(SRC + r"\_" + symbol + ".csv", 'rb')))
-	lst.reverse()	# reverse rows to be in timeline (earliest -> most) recent order
+	lst.reverse()  # reverse rows to be in timeline (earliest -> most) recent order
 	
 	fdepth = depth + ((slow + signal) * dpc) 
 	if fdepth < len(lst):
 		lst = lst[len(lst) - fdepth:]
+	
+	map(chartlib.adjust, lst)
 	
 	rows = []
 	for row in lst:

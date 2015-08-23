@@ -1,7 +1,8 @@
 import csv
 import json
+import chartlib
 
-SRC = r".\data\csv"
+SRC = r".\data\eod-csv"
 
 def aggregate(dpc, data):
 	out = []
@@ -12,7 +13,7 @@ def aggregate(dpc, data):
 		chunk = data[start:end]
 		agg = {
 			"Date": chunk[-1]['Date'],
-			"Open": float(chunk[0]['Open']), 
+			"Open": float(chunk[0]['Open']),
 			"High": max(map(lambda d: float(d['High']), chunk)),
 			"Low": min(map(lambda d: float(d['Low']), chunk)),
 			"Close": float(chunk[-1]['Close']),
@@ -24,17 +25,18 @@ def aggregate(dpc, data):
 		end = start + dpc
 		
 	return out
-
-
+	
 def getEod(params):
 	symbol = params['symbol'][0]
 	depth = int(params['depth'][0])
 	dpc = int(params['dpc'][0])
 	
 	lst = list(csv.DictReader(open(SRC + r"\_" + symbol + ".csv", 'rb')))
-	lst.reverse()	# flip to timeline order, oldest first
+	lst.reverse()  # flip to timeline order, oldest first
 	if depth < len(lst):
 		lst = lst[len(lst) - depth:]
+	
+	map(chartlib.adjust, lst)
 	
 	if dpc > 1:
 		return json.dumps(aggregate(dpc, lst))
