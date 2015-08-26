@@ -1,6 +1,6 @@
 import csv
 import json
-import chartlib
+from lib.libadjust import yAdjust
 
 SRC = r".\data\eod-csv"
 
@@ -36,7 +36,7 @@ def getEod(params):
 	if depth < len(lst):
 		lst = lst[len(lst) - depth:]
 	
-	map(chartlib.adjust, lst)
+	map(yAdjust, lst)
 	
 	if dpc > 1:
 		return json.dumps(aggregate(dpc, lst))
