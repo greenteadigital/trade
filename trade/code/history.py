@@ -1,8 +1,8 @@
-import csv
 import json
 import os
+import const
 
-SRC = r".\data\eod-csv"
+SRC = const.DATA_DIR
 
 def numLines(fname):
 	with open(fname) as f:

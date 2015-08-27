@@ -1,5 +1,7 @@
 import os, json
-dir_ = r".\data\eod-csv"
+import const
+
+dir_ = const.DATA_DIR
 
 def numLines(fname):
 	with open(fname) as f:

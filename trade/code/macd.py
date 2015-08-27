@@ -1,8 +1,9 @@
 import csv
 import json
-import chartlib
+from lib.libadjust import yAdjust
+import const
 
-SRC = r".\data\eod-csv"
+SRC = const.DATA_DIR
 
 def aggregate(dpc, data):
 	out = []
@@ -92,7 +93,7 @@ def getMacd(params):
 	if fdepth < len(lst):
 		lst = lst[len(lst) - fdepth:]
 	
-	map(chartlib.adjust, lst)
+	map(yAdjust, lst)
 	
 	rows = []
 	for row in lst:

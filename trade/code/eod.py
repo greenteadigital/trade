@@ -1,8 +1,9 @@
 import csv
 import json
 from lib.libadjust import yAdjust
+import const
 
-SRC = r".\data\eod-csv"
+SRC = const.DATA_DIR
 
 def aggregate(dpc, data):
 	out = []

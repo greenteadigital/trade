@@ -9,6 +9,7 @@ def yAdjust(data):
 	data['High'] = float(data['High']) * mult
 	data['Low'] = float(data['Low']) * mult
 	data['Close'] = float(data['Close']) * mult
+	data['Volume'] = int(data['Volume']) / mult
 
 def cleanSplits(d):
 	''' Convert date format and strings to floats '''

@@ -1,8 +1,9 @@
 import csv
 import json
-import chartlib
+from lib.libadjust import yAdjust
+import const
 
-SRC = r".\data\eod-csv"
+SRC = const.DATA_DIR
 
 def aggregate(dpc, data):
 		out = []
@@ -54,7 +55,7 @@ def getObv(params):
 	if depth < len(lst):
 		lst = lst[len(lst) - depth:]
 	
-	map(chartlib.adjust, lst)
+	map(yAdjust, lst)
 	
 	if dpc > 1:
 		return json.dumps(aggregate(dpc, lst))
