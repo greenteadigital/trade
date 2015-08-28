@@ -1,6 +1,8 @@
 import os
 from download import dllib
 import csv
+import symbols
+from const import SPLIT_DIR, RAW_DIR
 
 def yAdjust(data):
 	''' Adjust OHLC values using Y! provided Adj Close  '''
@@ -13,32 +15,40 @@ def yAdjust(data):
 
 def cleanSplits(d):
 	''' Convert date format and strings to floats '''
-	datestr = d['DATE'].strip()
-	d['DATE'] = '-'.join([ datestr[0:4], datestr[4:6], datestr[6:] ])
-	if d['TYPE'] == 'DIVIDEND':
-		d['VALUE'] = float(d['VALUE'])
-	elif d['TYPE'] == 'SPLIT':
-		denom, num = d['VALUE'].split(':')
-		d['VALUE'] = float(num) / float(denom)
+	datestr = d['SplitDate'].strip()
+	d['SplitDate'] = '-'.join([ datestr[0:4], datestr[4:6], datestr[6:] ])
+	if d['SplitType'] == 'DIVIDEND':
+		d['SplitValue'] = float(d['SplitValue'])
+	elif d['SplitType'] == 'SPLIT':
+		denom, num = d['SplitValue'].split(':')
+		d['SplitValue'] = float(num) / float(denom)
 
 def getMultMap(sym):
-	spath = os.path.join(dllib.SPLIT_DIR, 'divsplit_' + sym + '.csv')
-	slist = list(csv.DictReader(open(spath, 'rb'), fieldnames=['TYPE', 'DATE', 'VALUE']))
-	splits = filter(lambda d: d['TYPE'] in ('DIVIDEND', 'SPLIT'), slist)
+	spath = os.path.join(SPLIT_DIR, 'divsplit_' + sym + '.csv')
+	slist = list(csv.DictReader(open(spath, 'rb'), fieldnames=['SplitType', 'SplitDate', 'SplitValue']))
+	splits = filter(lambda d: d['SplitType'] in ('DIVIDEND', 'SPLIT'), slist)
 	map(cleanSplits, splits)
 	
-	opath = os.path.join(dllib.EOD_DIR, '_' + sym + '.csv')
+	opath = os.path.join(RAW_DIR, '_' + sym + '.csv')
 	ohlcv = list(csv.DictReader(open(opath, 'rb')))
 	
 	multmap = {}
 	mults = [1]
 	for splitrow in splits:
-		eodrow = filter(lambda d: d['Date'] == splitrow['DATE'], ohlcv)
+		# # TODO: Handle case where symbols has never had a split event
+		eodrow = filter(lambda d: d['Date'] == splitrow['SplitDate'], ohlcv)
 		if len(eodrow) == 1:
-			if splitrow['TYPE'] == 'DIVIDEND':
-				numerator = splitrow['VALUE']
+			if splitrow['SplitType'] == 'DIVIDEND':
+				numerator = splitrow['SplitValue']
 				mults.append(1 - (numerator / float(eodrow[0]['Close'])))
-			elif splitrow['TYPE'] == 'SPLIT':
-				mults.append(splitrow['VALUE'])
+			elif splitrow['SplitType'] == 'SPLIT':
+				mults.append(splitrow['SplitValue'])
 			
-			multmap[splitrow['DATE']] = reduce(lambda a, b: a * b, mults)
+			multmap[splitrow['SplitDate']] = reduce(lambda a, b: a * b, mults)
+	return multmap
+
+if __name__ == "__main__":
+	for sym in symbols.getSyms(None):
+		print sym
+		for k, v in getMultMap(sym).items():
+			print k, v

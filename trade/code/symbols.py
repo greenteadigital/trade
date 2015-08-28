@@ -1,7 +1,6 @@
-import os, json
-import const
-
-dir_ = const.DATA_DIR
+import os
+import json
+from const import RAW_DIR, JSON_DIR, pjoin
 
 def numLines(fname):
 	with open(fname) as f:
@@ -10,14 +9,19 @@ def numLines(fname):
 	return count
 
 def getSyms(params):
-	order = params['order'][0]
-	
-	if order == 'aplha':
-		symbols = map(lambda f: f.split('.')[0].lstrip('_'), os.listdir(dir_))
+	if params:
+		order = params['order'][0]
 		
-	elif order == 'biggest':
-		hfile = r".\data\json\history.json"
-		hist = json.load(open(hfile, 'rb'))
-		symbols = map(lambda m: m.keys()[0] , sorted(hist, key=lambda x: x.values()[0], reverse=True))
+		if order == 'aplha':
+			symbols = map(lambda f: f.split('.')[0].lstrip('_'), os.listdir(RAW_DIR))
+		
+		elif order == 'biggest':
+			hfile = pjoin(JSON_DIR, "history.json")
+			hist = json.load(open(hfile, 'rb'))
+			symbols = map(lambda m: m.keys()[0] , sorted(hist, key=lambda x: x.values()[0], reverse=True))
 	
-	return json.dumps(symbols)
+		return json.dumps(symbols)
+	
+	else:
+		return map(lambda f: f.split('.')[0].lstrip('_'), os.listdir(RAW_DIR))
+	

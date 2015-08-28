@@ -3,7 +3,7 @@ import json
 from lib.libadjust import yAdjust
 import const
 
-SRC = const.DATA_DIR
+SRC = const.EOD_RAW_DIR
 
 def aggregate(dpc, data):
 	out = []

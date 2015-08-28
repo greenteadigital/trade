@@ -4,12 +4,8 @@ import sqlite3
 import os
 import csv
 import zlib
+from const import FTP_DIR, DB_DIR
 
-PROJ_DIR = os.path.join(os.environ['HOME'], r'eclipse-workspace\trade')
-FTP_DIR = os.path.join(PROJ_DIR, r'data\ftp')
-DB_DIR = os.path.join(PROJ_DIR, r'data\sqlite')
-EOD_DIR = os.path.join(PROJ_DIR, r'data\eod-csv')
-SPLIT_DIR = os.path.join(PROJ_DIR, r'data\divs-splits')
 
 def backupSymbols():
 	''' Backup current symbol files and download latest symbols from nasdaq ftp '''
