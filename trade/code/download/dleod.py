@@ -4,6 +4,7 @@ import os
 import csv
 import urllib2
 from cStringIO import StringIO as strio
+import const
 
 def loadEodData(csv_str, symbol):
 	eodconn = sqlite3.connect(os.path.join(dllib.DB_DIR, "div_splits.db"))
@@ -44,7 +45,7 @@ def downloadEodData():
 	symcurs = symconn.cursor()
 	symselect = "select SYMBOL from nasdaqlisted union select NASDAQ_SYMBOL from otherlisted"
 	db_syms = map(lambda t: '_' + t[0], symcurs.execute(symselect).fetchall())
-	fs_syms = map(lambda n: n.split('.')[0], os.listdir(dllib.EOD_DIR))
+	fs_syms = map(lambda n: n.split('.')[0], os.listdir(const.RAW_DIR))
 	syms = filter(lambda i: i.isalpha(), map(lambda i: i.lstrip('_'), list(set(db_syms) - set(fs_syms))))
 	for symbol in syms:
 		ip2host = dllib.getIpMap()
@@ -59,7 +60,7 @@ def downloadEodData():
 			print 'requesting', url
 			try:
 				csv_txt = dllib.tryDecompress(opener.open(loc).read())
-				open(os.path.join(dllib.EOD_DIR, '_' + symbol + '.csv'), 'wb').write(csv_txt)
+				open(os.path.join(const.RAW_DIR, '_' + symbol + '.csv'), 'wb').write(csv_txt)
 				success = True
 				break
 			except urllib2.HTTPError:

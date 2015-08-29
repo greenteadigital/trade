@@ -1,0 +1,35 @@
+- New
+* In progress
++ Testing
+= Complete
+--------------------------------------
+
+=Build chart of data history to determine symbols with most available history.
+=Re-scale or reframe chart time frame to show latest data first and make daily candles not look tiny.
+=Find and download dividend and split data for symbols.
+=Load split and dividend data into sqlite.
+=Refactor dleod.py to break out the DB load code from the download code.
+=Fix candle colors and fills. See:
+	http://stockcharts.com/articles/mailbag/2010/08/qqqq-forms-hollow-red-candlestick.html
+=Adjust historical data to account for splits and dividends. See:
+	https://stat.ethz.ch/pipermail/r-sig-finance/2009q3/004602.html,
+	https://help.yahoo.com/kb/finance/SLN2311.html?impressions=true,
+	http://luminouslogic.com/how-to-normalize-historical-data-for-splits-dividends-etc.htm
+	http://www.crsp.com/products/documentation/crsp-calculations
+
+*Build updater for getting latest OHLC values.
+	-Create symbol-specific directories for all raw and adjusted .csv files to live in.
+	-Determine/apply naming convention to differentiate different raw files for the same symbol in same dir.
+	-Request next day beyond locally held data using datime.date + datetime.timdelta(days=1)
+	-Adjust and merge and all raw files and save as single file in adjusted directory.
+	-Adjust locally held 'Adj Close' values when new incoming Adj Close differs. Do so by:
+		multiplying all historical Adj Close vals. by (float(new['Adj Close']) / float(old['Adj Close'])),
+		which, for a dividend, will produce a number approaching 1, eg. 0.995493949771. A 2:1 split will
+		be more like 0.5, etc.
+
+-Build trend line capabilities into charts.
+	Especially the ability to draw/generate a trendline on long term charts,
+	and have it be drawn in the correct correlating position on daily charts.
+-Build options pricing component.
+-Backtest simple strategies like SMAs, MACD, etc.
+-Add caching with mtime invalidation to server.

@@ -3,6 +3,7 @@ import os
 import urllib2
 import sqlite3
 import csv
+import const
 from cStringIO import StringIO as strio
 
 def loadSplitData(csv_str, symbol):
@@ -47,7 +48,7 @@ def downloadSplitData():
 			print 'requesting', url
 			try:
 				csv_txt = dllib.tryDecompress(opener.open(loc).read())
-				open(os.path.join(dllib.SPLIT_DIR, 'divsplit_' + symbol + '.csv'), 'wb').write(csv_txt)
+				open(os.path.join(const.SPLIT_DIR, 'divsplit_' + symbol + '.csv'), 'wb').write(csv_txt)
 				success = True
 				break
 			except urllib2.HTTPError:

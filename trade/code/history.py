@@ -2,7 +2,7 @@ import json
 import os
 import const
 
-SRC = const.EOD_RAW_DIR
+SRC = const.RAW_DIR
 
 def numLines(fname):
 	with open(fname) as f:
