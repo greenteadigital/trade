@@ -4,15 +4,16 @@ import sqlite3
 import os
 import csv
 import zlib
-from const import FTP_DIR, DB_DIR
+from const import SYM_DIR, DB_DIR, pjoin
 
 
 def backupSymbols():
 	''' Backup current symbol files and download latest symbols from nasdaq ftp '''
-	for f in filter(lambda n: n.endswith('.bak'), os.listdir(FTP_DIR)):
-		os.remove(os.path.join(FTP_DIR, f))
-	for f in filter(lambda n: n.endswith('.txt'), os.listdir(FTP_DIR)):
-			os.rename(os.path.join(FTP_DIR, f), os.path.join(FTP_DIR, f + '.bak'))
+	files = os.listdir(SYM_DIR)
+	for f in filter(lambda n: n.endswith('.bak'), files):
+		os.remove(pjoin(SYM_DIR, f))
+	for f in filter(lambda n: n.endswith('.txt'), files):
+		os.rename(pjoin(SYM_DIR, f), pjoin(SYM_DIR, f + '.bak'))
 
 def downloadSymbols():
 	files = ('nasdaqlisted.txt', 'otherlisted.txt')
@@ -22,40 +23,21 @@ def downloadSymbols():
 	for f in files:
 		mtime = ftp.sendcmd('MDTM ' + f).split()[1]
 		name = f.split('.')[0] + '_' + mtime + '.txt'
-		out = open(os.path.join(FTP_DIR, name), 'wb')
+		out = open(pjoin(SYM_DIR, name), 'wb')
 		ftp.retrbinary("RETR %s" % f, out.write)
 		out.close()
 	ftp.quit()
 
 def reloadSymbols():
 	'''Load symbols and metadata into sqlite'''
-
-	FIN_STATUS = {
-		'D':'Deficient: Issuer Failed to Meet NASDAQ Continued Listing Requirements',
-		'E':'Delinquent: Issuer Missed Regulatory Filing Deadline',
-		'Q':'Bankrupt: Issuer Has Filed for Bankruptcy',
-		'N':'Normal (Default): Issuer Is NOT Deficient, Delinquent, or Bankrupt.',
-		'G':'Deficient and Bankrupt',
-		'H':'Deficient and Delinquent',
-		'J':'Delinquent and Bankrupt',
-		'K':'Deficient, Delinquent, and Bankrupt'
-	}
-
 	# see http://www.nasdaqtrader.com/trader.aspx?id=symboldirdefs
-	with sqlite3.connect(os.path.join(DB_DIR, "symbols.db")) as conn:
+	with sqlite3.connect(pjoin(DB_DIR, "symbols.db")) as conn:
 		curs = conn.cursor()
-		curs.execute("drop table if exists financial_status")
-		create_status = "create table financial_status (CODE, DESCRIPTION)"
-		print create_status
-		curs.execute(create_status)
-		for item in FIN_STATUS:
-			curs.execute("insert into financial_status (CODE, DESCRIPTION) values (?,?)", (item, FIN_STATUS[item]))
-		conn.commit()
-		for f in filter(lambda n: n.endswith('.txt'), os.listdir(FTP_DIR)):
-			with open(os.path.join(FTP_DIR, f), 'rb') as csvfile:
+		tables = ('nasdaqlisted', 'otherlisted')
+		for f in filter(lambda n: n.endswith('.txt'), os.listdir(SYM_DIR)):
+			with open(pjoin(SYM_DIR, f), 'rb') as csvfile:
 				reader = csv.DictReader(csvfile, delimiter="|")
 				for row in reader:
-					tables = ('nasdaqlisted', 'otherlisted')
 					if f.split('_')[0] in tables:
 						cols = map(lambda s: s.replace(' ', '_').upper(), sorted(row.keys()))
 						params = (f.split('_')[0], ','.join(cols))
@@ -65,10 +47,7 @@ def reloadSymbols():
 						curs.execute(create)
 						break
 				for row in reader:
-					qlst = []
-					for unused in xrange(len(row.keys())):
-						qlst.append('?')
-					qms = ','.join(qlst)
+					qms = ','.join(list('?' * len(row.keys())))
 					ins = 'insert into %s (%s) values (%s)' % (params[0], params[1], qms)
 					curs.execute(ins, ([str(row[key]) for key in sorted(row.keys())]))
 				conn.commit()
@@ -92,7 +71,7 @@ def tryDecompress(response):
 	if magicOffset > -1:
 		try:
 			# Ignore the 10-byte gzip file header and try to decompress the rest
-			return zlib.decompress(response[magicOffset + 10:], -15)
+			return zlib.decompress(response[magicOffset + 10:], wbits=-15)
 		except zlib.error as e:
 			raise e
 	else:
