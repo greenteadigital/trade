@@ -2,6 +2,7 @@ import os
 
 # # Funcs
 pjoin = os.path.join
+pexists = os.path.exists
 
 # # Directories
 HOME = os.environ['HOME']
