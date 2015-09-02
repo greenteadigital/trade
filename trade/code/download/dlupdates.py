@@ -48,7 +48,7 @@ def updateEodData():
 		mo, dy, yr, seq = getStartDate(symbol)
 		ip2host = dllib.getIpMap()
 
-		# Get targetip ip in round-robin fashion
+		# Get target ip in round-robin fashion
 		for ip in ip2host:
 			if ip not in rrobin:
 				rrobin[ip] = 0
@@ -79,8 +79,8 @@ def updateEodData():
 			print 'FAIL', symbol
 		
 
-# dllib.backupSymbols()
-# dllib.downloadSymbols()
+dllib.backupSymbols()
+dllib.downloadSymbols()
 updateEodData()
 
 

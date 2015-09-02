@@ -20,8 +20,8 @@
 *Build updater for getting latest OHLC values.
 	=Create symbol-specific directories for all raw .csv files to live in.
 	=Determine/apply naming convention to differentiate different raw files for the same symbol in same dir.
-	+Request next day beyond locally held data using datetime.date + datetime.timedelta(days=1)
-	-Adjust and merge and all raw files and save as single file in adjusted directory.
+	=Request next day beyond locally held data using datetime.date + datetime.timedelta(days=1)
+	*Adjust and merge and all raw files and save as single file in adjusted directory.
 	-Adjust locally held 'Adj Close' values when new incoming Adj Close differs. Do so by:
 		multiplying all historical Adj Close vals. by (float(new['Adj Close']) / float(old['Adj Close'])),
 		which, for a dividend, will produce a number approaching 1, eg. 0.995493949771. A 2:1 split will
@@ -33,3 +33,4 @@
 -Build options pricing component.
 -Backtest simple strategies like SMAs, MACD, etc.
 -Add caching with mtime invalidation to server.
+-Implement compressed storage for eod raw files as updates will be ~200 bytes, but use 4K of disk

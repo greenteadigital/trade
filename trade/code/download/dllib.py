@@ -67,11 +67,10 @@ def tryDecompress(response):
 	'''For decompressing a gzipped http server response using zlib'''
 	magicNum = "\x1f\x8b\x08"
 	magicOffset = response.find(magicNum)
-	# magicCount = response.count(magicNum)
 	if magicOffset > -1:
 		try:
 			# Ignore the 10-byte gzip file header and try to decompress the rest
-			return zlib.decompress(response[magicOffset + 10:], wbits=-15)
+			return zlib.decompress(response[magicOffset + 10:], -15)
 		except zlib.error as e:
 			raise e
 	else:
