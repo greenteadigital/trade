@@ -20,7 +20,7 @@
 *Build updater for getting latest OHLC values.
 	=Create symbol-specific directories for all raw .csv files to live in.
 	=Determine/apply naming convention to differentiate different raw files for the same symbol in same dir.
-	-Request next day beyond locally held data using datetime.date + datetime.timedelta(days=1)
+	+Request next day beyond locally held data using datetime.date + datetime.timedelta(days=1)
 	-Adjust and merge and all raw files and save as single file in adjusted directory.
 	-Adjust locally held 'Adj Close' values when new incoming Adj Close differs. Do so by:
 		multiplying all historical Adj Close vals. by (float(new['Adj Close']) / float(old['Adj Close'])),

@@ -19,10 +19,11 @@ def getStartDate(sym):
 		files.sort()
 		seq = re.split(r"[_\.]", files[-1])[2]
 		nseq = str(int(seq) + 1)
-		ldate = list(csv.DictReader(open(pjoin(loc, files[-1]), 'rb')))[0]['Date']
-		yr, mo, dy = map(int, ldate.split('-'))
-		nxt = date(yr, mo, dy) + timedelta(days=1)
-		return (nxt.month - 1, nxt.day, nxt.year, nseq)
+		with open(pjoin(loc, files[-1]), 'rb') as histdata:
+			ldate = list(csv.DictReader(histdata))[0]['Date']
+			yr, mo, dy = map(int, ldate.split('-'))
+			nxt = date(yr, mo, dy) + timedelta(days=1)
+			return (nxt.month - 1, nxt.day, nxt.year, nseq)
 
 
 def updateEodData():
@@ -41,40 +42,41 @@ def updateEodData():
 	raw_syms = map(lambda n: n.split('.')[0][1:], os.listdir(const.RAW_DIR))
 	syms = list(set(txt_syms + raw_syms))
 	syms.sort()
+
+	rrobin = {}
 	for symbol in syms:
-		ip2host = dllib.getIpMap()
 		mo, dy, yr, seq = getStartDate(symbol)
-		success = False
+		ip2host = dllib.getIpMap()
+
+		# Get targetip ip in round-robin fashion
 		for ip in ip2host:
-			params = (ip, symbol, mo, dy, yr)
-			url = "http://%s/table.csv?s=%s&a=%s&b=%s&c=%s&d=11&e=31&f=2099&g=d" % params
-			
-			print url
-			break
-			
-			# TODO: set up round-robin to spread load across available hosts
-			
-			loc = urllib2.Request(url)
-			loc.add_header('Accept-Encoding', 'gzip, deflate')
-			loc.add_header('Host', ip2host[ip])
-			opener = urllib2.build_opener()
-			print 'requesting', url
-			try:
-				csv_txt = dllib.tryDecompress(opener.open(loc).read())
-				_name = '_' + symbol
-				outdir = pjoin(const.RAW_DIR, _name)
-				if not pexists(outdir):
-					os.mkdir(outdir)
-				open(pjoin(outdir, _name + '_' + seq + '.csv'), 'wb').write(csv_txt)
-				success = True
-				break
-			except urllib2.HTTPError:
-				continue
-		if success:
+			if ip not in rrobin:
+				rrobin[ip] = 0
+				targetip = ip
+			else:
+				ld = [{count : ip} for ip, count in rrobin.items()]
+				ld = filter(lambda d: d.values()[0] in ip2host, ld)
+				ld.sort()
+				targetip = ld[0].values()[0]
+
+		params = (targetip, symbol, mo, dy, yr)
+		url = "http://%s/table.csv?s=%s&a=%s&b=%s&c=%s&d=11&e=31&f=2099&g=d" % params
+		loc = urllib2.Request(url)
+		loc.add_header('Accept-Encoding', 'gzip, deflate')
+		loc.add_header('Host', ip2host[targetip])
+		opener = urllib2.build_opener()
+		print 'requesting', url
+		try:
+			csv_txt = dllib.tryDecompress(opener.open(loc).read())
+			rrobin[targetip] += 1
+			_name = '_' + symbol
+			outdir = pjoin(const.RAW_DIR, _name)
+			if not pexists(outdir):
+				os.mkdir(outdir)
+			open(pjoin(outdir, _name + '_' + seq + '.csv'), 'wb').write(csv_txt)
 			print 'success', symbol
-		else:
-# 			print 'FAIL', symbol
-			pass
+		except urllib2.HTTPError:
+			print 'FAIL', symbol
 		
 
 # dllib.backupSymbols()
