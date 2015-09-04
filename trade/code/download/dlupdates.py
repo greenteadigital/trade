@@ -7,6 +7,7 @@ import const
 from const import pjoin, pexists
 from fnmatch import fnmatch
 import re
+from lib.libadjust import mergeAndAdjust
 # import sys
 
 
@@ -75,6 +76,7 @@ def updateEodData():
 				os.mkdir(outdir)
 			open(pjoin(outdir, _name + '_' + seq + '.csv'), 'wb').write(csv_txt)
 			print 'success', symbol
+			mergeAndAdjust(symbol)
 		except urllib2.HTTPError:
 			print 'FAIL', symbol
 		
