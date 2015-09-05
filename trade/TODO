@@ -22,11 +22,7 @@
 	=Determine/apply naming convention to differentiate different raw files for the same symbol in same dir.
 	=Request next day beyond locally held data using datetime.date + datetime.timedelta(days=1)
 	*Adjust and merge and all raw files and save as single file in adjusted directory.
-	-Adjust locally held 'Adj Close' values when new incoming Adj Close differs. Do so by:
-		multiplying all historical Adj Close vals. by (float(new['Adj Close']) / float(old['Adj Close'])),
-		which, for a dividend, will produce a number approaching 1, eg. 0.995493949771. A 2:1 split will
-		be more like 0.5, etc.
-
+	
 -Build trend line capabilities into charts.
 	Especially the ability to draw/generate a trendline on long term charts,
 	and have it be drawn in the correct correlating position on daily charts.

@@ -1,8 +1,11 @@
 import os
+from cStringIO import StringIO
 
 # # Funcs
 pjoin = os.path.join
 pexists = os.path.exists
+pisfile = os.path.isfile
+strio = StringIO
 
 # # Directories
 HOME = os.environ['HOME']

@@ -1,9 +1,9 @@
-import csv
 import json
-from lib.libadjust import yAdjust
 import const
+from const import pjoin
+from zipfile import ZipFile, ZIP_DEFLATED
 
-SRC = const.RAW_DIR
+SRC = const.ADJ_DIR
 
 def aggregate(dpc, data):
 	out = []
@@ -86,14 +86,15 @@ def getMacd(params):
 	depth = int(params['depth'][0])
 	dpc = int(params['dpc'][0])
 	
-	lst = list(csv.DictReader(open(SRC + r"\_" + symbol + ".csv", 'rb')))
+	name = '_' + symbol + '.json'
+	zname = name + '.zip'
+	with ZipFile(pjoin(SRC, zname), 'r', ZIP_DEFLATED).open(name) as f:
+		lst = json.loads(f.read())
 	lst.reverse()  # reverse rows to be in timeline (earliest -> most) recent order
 	
 	fdepth = depth + ((slow + signal) * dpc) 
 	if fdepth < len(lst):
 		lst = lst[len(lst) - fdepth:]
-	
-	map(yAdjust, lst)
 	
 	rows = []
 	for row in lst:

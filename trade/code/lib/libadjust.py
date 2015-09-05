@@ -3,7 +3,7 @@ import os
 import csv
 from const import pjoin
 import json
-
+from zipfile import ZipFile, ZIP_DEFLATED
 
 def yAdjust(data):
 	''' Adjust OHLC values using Y! provided Adj Close '''
@@ -28,39 +28,23 @@ def mergeAndAdjust(symbol):
 	for f in files:
 		with open(pjoin(srcdir, f), 'rb') as d:
 			ld = list(csv.DictReader(d))
-			if carried_mult != 1.0:
-				for sess in ld:
-					sess['Adj Close'] = float(sess['Adj Close']) * carried_mult
-			carried_mult = float(ld[-1]['Adj Close']) / float(ld[-1]['Close'])
-			merged += ld
+			if ld:
+				if carried_mult != 1.0:
+					for sess in ld:
+						sess['Adj Close'] = float(sess['Adj Close']) * carried_mult
+				carried_mult = float(ld[-1]['Adj Close']) / float(ld[-1]['Close'])
+				merged += ld
 	
 	# ...and then use Adj Close to adjust the remaining values
 	map(yAdjust, merged)
 	
 	name = '_' + symbol + '.json'
-	with open(pjoin(const.ADJ_DIR, name), 'wb') as out:
-		out.write(json.dumps(merged))
-	print name
+	zname = name + '.zip'
+	with ZipFile(pjoin(const.ADJ_DIR, zname), 'w', ZIP_DEFLATED) as out:
+		out.writestr(name, json.dumps(merged))
+	print zname
 
 if __name__ == '__main__':
-	for sym in os.listdir(const.RAW_DIR):
+	for sym in sorted(os.listdir(const.RAW_DIR)):
 		mergeAndAdjust(sym[1:])
-		'''
-_OFLX.json
-_OFS.json
-_OGCP.json
-_OGE.json
-_OGEN.json
-_OGS.json
-_OGXI.json
-_OHAI.json
-Traceback (most recent call last):
-  File "C:\Users\Ben\eclipse-workspace\trade\code\lib\libadjust.py", line 47, in <module>
-    mergeAndAdjust(sym[1:])
-  File "C:\Users\Ben\eclipse-workspace\trade\code\lib\libadjust.py", line 38, in mergeAndAdjust
-    map(yAdjust, merged)
-  File "C:\Users\Ben\eclipse-workspace\trade\code\lib\libadjust.py", line 10, in yAdjust
-    mult = float(data['Adj Close']) / float(data['Close'])
-ZeroDivisionError: float division by zero
 
-		'''
