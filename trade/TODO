@@ -17,11 +17,12 @@
 	http://luminouslogic.com/how-to-normalize-historical-data-for-splits-dividends-etc.htm
 	http://www.crsp.com/products/documentation/crsp-calculations
 
-*Build updater for getting latest OHLC values.
++Build updater for getting latest OHLC values.
 	=Create symbol-specific directories for all raw .csv files to live in.
 	=Determine/apply naming convention to differentiate different raw files for the same symbol in same dir.
 	=Request next day beyond locally held data using datetime.date + datetime.timedelta(days=1)
-	*Adjust and merge and all raw files and save as single file in adjusted directory.
+	=Adjust and merge and all raw files and save as single file in adjusted directory.
+	=Refactor server and history module to use multiple worker processes when scanning new adjusted zips. 
 	
 -Build trend line capabilities into charts.
 	Especially the ability to draw/generate a trendline on long term charts,

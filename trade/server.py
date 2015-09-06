@@ -1,17 +1,18 @@
 from SocketServer import ThreadingTCPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from urlparse import urlparse, parse_qs
+import multiprocessing as multi
 import sys
 sys.path.append(r".\code")
 from macd import getMacd  # @UnresolvedImport
 from symbols import getSyms  # @UnresolvedImport
 from obv import getObv  # @UnresolvedImport
 from eod import getEod  # @UnresolvedImport
+from history import getHistory  # @UnresolvedImport
+
 
 if __name__ == '__main__':
 	
-	from history import getHistory  # @UnresolvedImport
-
 	PORT = 80
 	
 	dynurls = {
@@ -35,6 +36,7 @@ if __name__ == '__main__':
 		
 		def do_GET(self):
 			url = urlparse(self.path)
+			params = parse_qs(url.query)
 			
 			if url.path in dynurls:
 				self.send_response(200)
@@ -44,14 +46,16 @@ if __name__ == '__main__':
 					if url.path in cache:
 						self.wfile.write(cache[url.path])
 					else:
-						cache[url.path] = dynurls[url.path](parse_qs(url.query))
+						if url.path == '/history.json':
+							params['pool'] = multi.Pool(3)
+						cache[url.path] = dynurls[url.path](params)
 						self.wfile.write(cache[url.path])
 				else:
-					self.wfile.write(dynurls[url.path](parse_qs(url.query)))
+					self.wfile.write(dynurls[url.path](params))
 			else:
 				SimpleHTTPRequestHandler.do_GET(self)
 	
-
+	
 	httpd = ThreadingTCPServer(('localhost', PORT), CustomHandler)
 	sa = httpd.socket.getsockname()
 	print "Serving HTTP on", sa[0], "port", sa[1], "..."

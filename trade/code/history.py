@@ -1,54 +1,48 @@
 import json
 import os
 import const
-from const import pjoin, pexists, pisfile
+from const import pjoin
 from zipfile import ZipFile, ZIP_DEFLATED
-import multiprocessing as multi
 
 SRC = const.ADJ_DIR
-pool = multi.Pool(3)
 
 def numLines(symbol):
-	_zip = ZipFile(pjoin(SRC, "_" + symbol + '.json.zip'), 'r', ZIP_DEFLATED)
-	with _zip.open("_" + symbol + '.json', 'r') as f:
+	name = "_" + symbol + '.json'
+	zname = name + '.zip'
+	_zip = ZipFile(pjoin(SRC, zname), 'r', ZIP_DEFLATED)
+	with _zip.open(name, 'r') as f:
 		for count, unused in enumerate(json.load(f), 1):
 			pass
-	return count
+	return (symbol, count)
 
 def getHistory(*args):
-	hfile = pjoin(const.JSON_DIR, "history.json")
+	pool = args[0]['pool']
+	histpath = pjoin(const.JSON_DIR, "history.json")
 	
-	# Set the file's [a|m]time back to epoch to force rewrite of hfile.
-	os.utime(hfile, (0, 0))
+# 	Set the file's [a|m]time back to epoch to force rewrite of histpath.
+# 	os.utime(histpath, (0, 0))
 	
-	base = os.path.getmtime(hfile)
+	base = os.path.getmtime(histpath)
 	newer = filter(lambda f: os.path.getmtime(os.path.join(SRC, f)) > base, os.listdir(SRC))
 	
-	if newer:
-		hist = json.load(open(hfile, 'rb'))  # = [ {"A": 999}, {"Z": 234}, {"MM": 777} ... ]
-		
-		count = 0
-		def updateHist(count):
-			map(lambda d: d.update((k, count) for k, unused in d.items() if k == symbol), hist)
-			count += 1
-		
-		for symbol in map(lambda f: f.split('.')[0][1:], newer):
-			print 'recalculating history for', symbol
-# 			count = numLines(ZipFile(pjoin(SRC, "_" + symbol + '.json.zip'), 'r', ZIP_DEFLATED)) - 1
-			pool.apply_async(numLines, [symbol], callback=updateHist)
+	with open(histpath, 'rb') as hfile:
+		if newer:
+			hist = []
 			
+			def updateHist(tup):
+				hist.append({tup[0] : tup[1]})
 			
-		while 1:
-			if count == len(newer):
-				update = json.dumps(map(lambda t: dict(t), sorted(hist, key=lambda x: x.values()[0], reverse=True)))
-				open(hfile, 'wb').write(update)
-				return update
-			else:
-# 				print count
-				continue
-	
-	else:
-		return open(hfile, 'rb').read()
+			for symbol in map(lambda f: f.split('.')[0][1:], newer):
+				pool.apply_async(numLines, [symbol], callback=updateHist)
 
-# if __name__ == '__main__':
-# 	pass
+			while 1:
+				if len(hist) < len(newer):
+					continue
+				else:
+					pool.close()
+					update = json.dumps(map(lambda t: dict(t), sorted(hist, key=lambda x: x.values()[0], reverse=True)))
+					open(histpath, 'wb').write(update)
+					return update
+		else:
+			pool.close()
+			return hfile.read()
