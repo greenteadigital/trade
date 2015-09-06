@@ -3,6 +3,7 @@ import os
 import const
 from const import pjoin
 from zipfile import ZipFile, ZIP_DEFLATED
+from time import sleep
 
 SRC = const.ADJ_DIR
 
@@ -29,14 +30,12 @@ def getHistory(*args):
 		if newer:
 			hist = []
 			
-			def updateHist(tup):
-				hist.append({tup[0] : tup[1]})
-			
 			for symbol in map(lambda f: f.split('.')[0][1:], newer):
-				pool.apply_async(numLines, [symbol], callback=updateHist)
+				pool.apply_async(numLines, [symbol], callback=lambda tup: hist.append({tup[0] : tup[1]}))
 
 			while 1:
 				if len(hist) < len(newer):
+					sleep(0.5)
 					continue
 				else:
 					pool.close()
