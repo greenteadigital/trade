@@ -5,6 +5,7 @@ from cStringIO import StringIO
 pjoin = os.path.join
 pexists = os.path.exists
 pisfile = os.path.isfile
+pisdir = os.path.isdir
 strio = StringIO
 
 # # Directories

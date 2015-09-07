@@ -4,24 +4,25 @@ import os
 import csv
 import urllib2
 import const
-from const import pjoin, pexists
+from const import pjoin, pexists, strio
 from fnmatch import fnmatch
 import re
 from lib.libadjust import mergeAndAdjust
-# import sys
+from zipfile import ZipFile, ZIP_DEFLATED
 
+BAD_SYMS = ['OHGI']
 
 def getStartDate(sym):
-	loc = pjoin(const.RAW_DIR, '_' + sym)
+	loc = pjoin(const.RAW_DIR, '_' + sym + '.csv.zip')
 	if not pexists(loc):
 		return (0, 1, 1900, '0')
 	else:
-		files = os.listdir(loc)
-		files.sort()
-		seq = re.split(r"[_\.]", files[-1])[2]
-		nseq = str(int(seq) + 1)
-		with open(pjoin(loc, files[-1]), 'rb') as histdata:
-			ldate = list(csv.DictReader(histdata))[0]['Date']
+		with ZipFile(loc, 'r', ZIP_DEFLATED) as _zip:
+			files = _zip.namelist()
+			files.sort()
+			seq = re.split(r"[_\.]", files[-1])[2]
+			nseq = str(int(seq) + 1)
+			ldate = list(csv.DictReader(strio(_zip.read(files[-1]))))[0]['Date']
 			yr, mo, dy = map(int, ldate.split('-'))
 			nxt = date(yr, mo, dy) + timedelta(days=1)
 			return (nxt.month - 1, nxt.day, nxt.year, nseq)
@@ -42,7 +43,13 @@ def updateEodData():
 	
 	raw_syms = map(lambda n: n.split('.')[0][1:], os.listdir(const.RAW_DIR))
 	syms = list(set(txt_syms + raw_syms))
+	for sym in BAD_SYMS:
+		syms.remove(sym)
 	syms.sort()
+	
+	# # TEMPORARY TRUNCATION, REMOVE
+# 	LAST = 'OHAI'
+# 	syms = syms[syms.index(LAST) + 1 :]
 
 	rrobin = {}
 	for symbol in syms:
@@ -69,21 +76,21 @@ def updateEodData():
 		print 'requesting', url
 		try:
 			csv_txt = dllib.tryDecompress(opener.open(loc).read())
-			rrobin[targetip] += 1
-			_name = '_' + symbol
-			outdir = pjoin(const.RAW_DIR, _name)
-			if not pexists(outdir):
-				os.mkdir(outdir)
-			open(pjoin(outdir, _name + '_' + seq + '.csv'), 'wb').write(csv_txt)
-			print 'success', symbol
-			mergeAndAdjust(symbol)
+			if list(csv.DictReader(strio(csv_txt))):
+				rrobin[targetip] += 1
+				_name = '_' + symbol
+				zname = _name + '.csv.zip'
+				with ZipFile(pjoin(const.RAW_DIR, zname), 'a', ZIP_DEFLATED) as _zip:
+					_zip.writestr(_name + '_' + seq + '.csv', csv_txt)
+				print 'success', symbol
+				mergeAndAdjust(symbol)
 		except urllib2.HTTPError:
 			print 'FAIL', symbol
 		
-
-dllib.backupSymbols()
-dllib.downloadSymbols()
-updateEodData()
+if __name__ == '__main__':
+	dllib.backupSymbols()
+	dllib.downloadSymbols()
+	updateEodData()
 
 
 # EOF
