@@ -52,5 +52,8 @@ input#volmult {
 	stroke: red;
 	fill: white;
 }
-
+.indicatorInputs {
+	position: relative;
+	left: 18px;
+}
 

@@ -19,14 +19,18 @@
 	<br/>
 	<div class="candlesticks"></div>
 	<br/>
-	<div class="obv">OBV:
-		<input type="checkbox" id="obvPoints"/><label for="obvPoints">Points</label>
+	<div class="obv">
+		<span class="indicatorInputs">OBV:
+			<input type="checkbox" id="obvPoints"/><label for="obvPoints">Points</label>
+		</span>
 	</div>
 	<br/>
-	<div class="macd">MACD:
-		<input type="checkbox" id="macdPoints"/><label for="macdPoints">Mpts</label>
-		<input type="checkbox" id="sigPoints"/><label for="sigPoints">Spts</label>
-		<input type="checkbox" id="macdHisto"/><label for="macdHisto">Histogram</label>
+	<div class="macd">
+		<span class="indicatorInputs">MACD:
+			<input type="checkbox" id="macdPoints"/><label for="macdPoints">Mpts</label>
+			<input type="checkbox" id="sigPoints"/><label for="sigPoints">Spts</label>
+			<input type="checkbox" id="macdHisto"/><label for="macdHisto">Histogram</label>
+		</span>
 	</div>
 	
 	<script type="text/javascript">
@@ -42,23 +46,24 @@
 		
 		if (symbolsLoaded == false) {
 			d3.json(dataServer + '/symbols.json?order=biggest', function(d) {
-				var dropdown = d3.select("#symselect")
-				
-				dropdown.selectAll("option")
+
+				d3.select("#symselect").selectAll("option")
 					.data(d).enter()
 					.append("option")
 					.attr("value", function(d) { return d })
 					.text(String)
-				
-				dropdown.select("option[selected=selected]")
-					.attr("selected", null);
-				
-				dropdown.select("option[value=" + location.hash.substr(1) + "]")
-					.attr("selected", "selected");
-				
 			});
+			
 			symbolsLoaded = true;
 		}
+		
+		var dropdown = d3.select("#symselect")
+		
+		dropdown.select("option[selected=selected]")
+			.attr("selected", null);
+	
+		dropdown.select("option[value=" + location.hash.substr(1) + "]")
+			.attr("selected", "selected");
 		
 
 		d3.json(dataServer + '/eod.json'
@@ -68,6 +73,7 @@
 				buildCandles);
 
 	}
+
 	</script>
 	<script type="text/javascript" src="/charts/js/events.js"></script>
   </body>

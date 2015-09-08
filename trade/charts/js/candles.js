@@ -120,6 +120,8 @@ var buildCandles = function(data) {
 			+ " V:" + d.Volume
 			});
 	
+	window.scrollTo(scrollMaxX, 0);	
+	
 	d3.json(dataServer
 			+ '/obv.json'
 			+ '?symbol=' + location.hash.substr(1)
