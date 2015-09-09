@@ -56,22 +56,12 @@
 			
 			symbolsLoaded = true;
 		}
-		
-		var dropdown = d3.select("#symselect")
-		
-		dropdown.select("option[selected=selected]")
-			.attr("selected", null);
-	
-		dropdown.select("option[value=" + location.hash.substr(1) + "]")
-			.attr("selected", "selected");
-		
 
 		d3.json(dataServer + '/eod.json'
 				+ '?symbol=' + location.hash.substr(1)
 				+ '&depth=' + histDepth
 				+ '&dpc=' + daysPerCandle,
 				buildCandles);
-
 	}
 
 	</script>

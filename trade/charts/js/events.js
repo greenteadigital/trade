@@ -4,6 +4,15 @@ window.onhashchange = window.onload = function() {
 	d3.selectAll("svg").remove();
 	candleData = undefined;		
 	fetchData();
+	window.setTimeout(function() {
+		var dropdown = d3.select("#symselect")
+		
+		dropdown.select("option[selected=selected]")
+			.attr("selected", null);
+	
+		dropdown.select("option[value=" + location.hash.substr(1) + "]")
+			.attr("selected", "selected");
+	}, 500);
 }
 
 d3.select("#daysPer")

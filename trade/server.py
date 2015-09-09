@@ -2,8 +2,13 @@ from SocketServer import ThreadingTCPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from urlparse import urlparse, parse_qs
 import multiprocessing as multi
+import time
+from const import pjoin
+import const
+import os
 import sys
 sys.path.append(r".\code")
+
 from macd import getMacd  # @UnresolvedImport
 from symbols import getSyms  # @UnresolvedImport
 from obv import getObv  # @UnresolvedImport
@@ -31,7 +36,8 @@ if __name__ == '__main__':
 	class CustomHandler(SimpleHTTPRequestHandler):
 		
 		def end_headers(self):
-			self.send_header('Access-Control-Allow-Origin', '*')
+			''' No longer necessary, leaving as example '''
+			# self.send_header('Access-Control-Allow-Origin', '*')
 			SimpleHTTPRequestHandler.end_headers(self)
 		
 		def do_GET(self):
@@ -53,7 +59,24 @@ if __name__ == '__main__':
 				else:
 					self.wfile.write(dynurls[url.path](params))
 			else:
-				SimpleHTTPRequestHandler.do_GET(self)
+				last = self.headers.get("If-Modified-Since")
+				if last:
+					cachetime = time.mktime(time.strptime(last, "%a, %d %b %Y %H:%M:%S GMT"))
+# 					latest = time.mktime(time.gmtime(os.path.getmtime('.' + self.path)))
+					latest = time.mktime(time.gmtime(os.path.getmtime('.' + self.path)))
+					
+					print self.path
+					print cachetime
+					print latest
+					print (latest - cachetime) / 60
+					
+					if cachetime < latest:
+						SimpleHTTPRequestHandler.do_GET(self)
+					else:
+						self.send_response(304)
+						self.end_headers()
+				else:
+					SimpleHTTPRequestHandler.do_GET(self)
 	
 	
 	httpd = ThreadingTCPServer(('localhost', PORT), CustomHandler)
