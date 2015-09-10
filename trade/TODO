@@ -23,11 +23,12 @@
 	=Adjust and merge and all raw files and save as single file in adjusted directory.
 	=Refactor server and history module to use multiple worker processes when scanning new adjusted zips. 
 	=Implement compressed storage for eod raw files as updates will be ~200 bytes, but use 4K of disk
-	
+=Add caching with mtime invalidation to server.
+
 *Build trend line capabilities into charts.
 	Especially the ability to draw/generate a trendline on long term charts,
 	and have it be drawn in the correct correlating position on daily charts.
 	
 -Build options pricing component.
 -Backtest simple strategies like SMAs, MACD, etc.
--Add caching with mtime invalidation to server.
+

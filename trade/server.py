@@ -58,25 +58,25 @@ if __name__ == '__main__':
 						self.wfile.write(cache[url.path])
 				else:
 					self.wfile.write(dynurls[url.path](params))
-			else:
-				last = self.headers.get("If-Modified-Since")
-				if last:
-					cachetime = time.mktime(time.strptime(last, "%a, %d %b %Y %H:%M:%S GMT"))
-# 					latest = time.mktime(time.gmtime(os.path.getmtime('.' + self.path)))
-					latest = time.mktime(time.gmtime(os.path.getmtime('.' + self.path)))
-					
-					print self.path
-					print cachetime
-					print latest
-					print (latest - cachetime) / 60
-					
-					if cachetime < latest:
-						SimpleHTTPRequestHandler.do_GET(self)
-					else:
-						self.send_response(304)
-						self.end_headers()
-				else:
+			
+			elif self.headers.get("If-Modified-Since"):
+
+				client_tmstruct = time.strptime(self.headers.get("If-Modified-Since"), "%a, %d %b %Y %H:%M:%S GMT")
+				
+				# Convert from immutable named-tuple to mutable list
+				writable = list(time.gmtime(os.path.getmtime('.' + self.path)))
+				
+				# Set 'tm_isdst' value for local file equal to value from client header
+				writable[-1] = client_tmstruct[-1]
+				last_modtime = time.mktime(time.struct_time(tuple(writable)))
+
+				if last_modtime > time.mktime(client_tmstruct):
 					SimpleHTTPRequestHandler.do_GET(self)
+				else:
+					self.send_response(304)
+					self.end_headers()
+			else:
+				SimpleHTTPRequestHandler.do_GET(self)
 	
 	
 	httpd = ThreadingTCPServer(('localhost', PORT), CustomHandler)

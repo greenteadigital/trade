@@ -13,6 +13,7 @@ window.onhashchange = window.onload = function() {
 		dropdown.select("option[value=" + location.hash.substr(1) + "]")
 			.attr("selected", "selected");
 	}, 500);
+	
 }
 
 d3.select("#daysPer")
