@@ -121,6 +121,7 @@ var buildCandles = function(data) {
 			});
 	
 	window.scrollTo(scrollMaxX, 0);	
+	enableTrendLine();
 	
 	d3.json(dataServer
 			+ '/obv.json'
