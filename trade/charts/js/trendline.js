@@ -2,10 +2,7 @@ var trendline;
 //STILLBROKEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 function enableTrendLine() {
 	log('in enableTrendLine')
-	var chart = d3.select("#candleSvg");
-	log(chart)
-	var annotate = chart.append("g");
-	log(annotate)
+	var annotate = d3.select("#annotationLayer");
 	
 	function mousedown() {
 		log('mousedown');
@@ -30,8 +27,8 @@ function enableTrendLine() {
 		log('mouseup');
 		annotate.on("mousemove", null);
 	
-	annotate.on("mousedown", mousedown())
-    	.on("mouseup", mouseup());
+	annotate.on("mousedown", mousedown)
+    	.on("mouseup", mouseup);
 	
 	}
 }

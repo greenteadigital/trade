@@ -22,14 +22,14 @@ if __name__ == '__main__':
 	
 	dynurls = {
 			'/macd.json': getMacd,
+			
 			'/symbols.json': getSyms,
 			'/obv.json': getObv,
 			'/history.json': getHistory,
 			'/eod.json' : getEod
 			}
 	
-	# staturls = []
-	
+	needspool = ['/history.json']
 	cacheable = ['/history.json']
 	cache = {}
 	
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 					if url.path in cache:
 						self.wfile.write(cache[url.path])
 					else:
-						if url.path == '/history.json':
+						if url.path in needspool:
 							params['pool'] = multi.Pool(3)
 						cache[url.path] = dynurls[url.path](params)
 						self.wfile.write(cache[url.path])
