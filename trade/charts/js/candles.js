@@ -14,7 +14,14 @@ var buildCandles = function(data) {
 	var gridLayer = chart.append("g");
 	var volumeLayer = chart.append("g");
 	var candleLayer = chart.append("g");
-	chart.append("g").attr('id', 'annotationLayer');
+	
+	// Set up annotation layer for later use by trendlines, etc.
+	chart.append("g")
+		.attr('id', 'annotationGroup')
+		.append("rect")
+		.attr("width", width)
+		.attr("height", height)
+		.attr('id', 'annotationRect');
 	
 	var minY = d3.min(data.map(function(d) { return +d.Low; }));
 	var maxY = d3.max(data.map(function(d) { return +d.High; }))
@@ -122,7 +129,7 @@ var buildCandles = function(data) {
 			});
 	
 	window.scrollTo(scrollMaxX, 0);	
-	//enableTrendLine();
+	enableTrendLine();
 	
 	d3.json(dataServer
 			+ '/obv.json'

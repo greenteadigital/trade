@@ -2,7 +2,7 @@
 
 window.onhashchange = window.onload = function() {
 	d3.selectAll("svg").remove();
-	candleData = undefined;		
+	candleData = undefined;
 	fetchData();
 	window.setTimeout(function() {
 		var dropdown = d3.select("#symselect")
@@ -60,3 +60,9 @@ d3.select("#macdHisto")
 		macdHisto = d3.event.target.checked;
 		drawMacdHisto();
 });
+
+d3.select("#trendlineTool")
+	.on("click", function() {
+		d3.selectAll('.trendline').remove();
+		
+	});
