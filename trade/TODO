@@ -26,8 +26,9 @@
 =Add caching with mtime invalidation to server.
 
 *Build trend line capabilities into charts.
-	Especially the ability to draw/generate a trendline on long term charts,
-	and have it be drawn in the correct correlating position on daily charts.
+	=Draw basic trendlines.
+	*Draw linear regression channels.
+	-Draw/generate a trendline on long term charts, and have it be drawn in the correct correlating position on daily charts.
 	
 -Build options pricing component.
 -Backtest simple strategies like SMAs, MACD, etc.

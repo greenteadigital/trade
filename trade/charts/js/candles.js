@@ -13,7 +13,8 @@ var buildCandles = function(data) {
 	
 	var gridLayer = chart.append("g");
 	var volumeLayer = chart.append("g");
-	var candleLayer = chart.append("g");
+	var candleLayer = chart.append("g")
+		.attr('id', 'candleLayer');
 	
 	// Set up annotation layer for later use by trendlines, etc.
 	chart.append("g")

@@ -64,5 +64,5 @@ d3.select("#macdHisto")
 d3.select("#trendlineTool")
 	.on("click", function() {
 		d3.selectAll('.trendline').remove();
-		
+		//!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	});

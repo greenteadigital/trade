@@ -3,6 +3,7 @@ var trendline;
 function enableTrendLine() {
 
 	var annotate = d3.select("#annotationGroup");
+//	var annotate = d3.select("#candleLayer");
 	
 	annotate.on('mousedown', mousedown)
 		.on('mouseup', mouseup);
