@@ -60,11 +60,11 @@ if __name__ == '__main__':
 					self.wfile.write(dynurls[url.path](params))
 			
 			elif self.headers.get("If-Modified-Since"):
-
+				
 				client_tmstruct = time.strptime(self.headers.get("If-Modified-Since"), "%a, %d %b %Y %H:%M:%S GMT")
 				
 				# Convert from immutable named-tuple to mutable list
-				writable = list(time.gmtime(os.path.getmtime('.' + self.path)))
+				writable = list(time.gmtime(os.path.getmtime('.' + url.path)))
 				
 				# Set 'tm_isdst' value for local file equal to value from client header
 				writable[-1] = client_tmstruct[-1]

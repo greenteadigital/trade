@@ -3,8 +3,7 @@ var buildCandles = function(data) {
 	
 	var width = cwidth;
 	var height = cheight;
-	
-	
+
 	var chart = d3.select("div.candlesticks")
 		.append("svg")
 		.attr("width", width)
@@ -19,13 +18,14 @@ var buildCandles = function(data) {
 	// Set up annotation layer for later use by trendlines, etc.
 	chart.append("g")
 		.attr('id', 'annotationGroup')
+		.attr('display', 'none')
 		.append("rect")
 		.attr("width", width)
 		.attr("height", height)
 		.attr('id', 'annotationRect');
 	
 	var minY = d3.min(data.map(function(d) { return +d.Low; }));
-	var maxY = d3.max(data.map(function(d) { return +d.High; }))
+	var maxY = d3.max(data.map(function(d) { return +d.High; }));
 	
 	var y = d3.scale.linear()
 		.domain([0.99*minY, 1.01*maxY])

@@ -26,8 +26,11 @@
 =Add caching with mtime invalidation to server.
 
 *Build trend line capabilities into charts.
-	=Draw basic trendlines.
-	*Draw linear regression channels.
+	*Draw basic trendlines.
+		-Trend line controls: toggle display:none/inline, clear t-lines, save t-lines on display:none
+		-Provide draw/view/clear functions.
+		-Add handles to t-lines to reposition rather than clear and redraw. 
+	-Draw linear regression channels.
 	-Draw/generate a trendline on long term charts, and have it be drawn in the correct correlating position on daily charts.
 	
 -Build options pricing component.

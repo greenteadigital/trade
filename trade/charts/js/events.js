@@ -61,8 +61,15 @@ d3.select("#macdHisto")
 		drawMacdHisto();
 });
 
-d3.select("#trendlineTool")
+d3.select("#trendlineCtl")
 	.on("click", function() {
-		d3.selectAll('.trendline').remove();
-		//!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		var g = d3.select("#annotationGroup");
+		if (d3.event.target.checked) {
+			g.attr('display', 'inline');
+		} else {
+			g.attr('display', 'none');
+//			d3.select('#annotationRect')
+//				.attr('width', null)
+//				.attr('height', null);
+		}
 	});

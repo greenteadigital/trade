@@ -67,17 +67,19 @@ rect#annotationRect {
 	stroke: black;
 	stroke-width: 1;
 }
-
 .diagtool {
     border: 1px solid gray;
     display: inline-block;
     font-family: Lucida Console;
     font-size: small;
-/*     transform: rotate(315deg); */
+    transform: rotate(315deg);
 }
 .diagtool:hover {
 	cursor: pointer;
 }
 #trendlineTool {
-/* 	margin: 23px 0 -18px; */
+	margin: 23px 0 -18px;
+}
+.icon_sm {
+	margin: 5px;
 }
