@@ -74,12 +74,9 @@ rect#annotationRect {
     font-size: small;
     transform: rotate(315deg);
 }
-.diagtool:hover {
+.diagtool:hover, .cursorPointer:hover {
 	cursor: pointer;
 }
 #trendlineTool {
 	margin: 23px 0 -18px;
-}
-.icon_sm {
-	margin: 5px;
 }

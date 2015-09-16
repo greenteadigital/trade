@@ -22,7 +22,6 @@ if __name__ == '__main__':
 	
 	dynurls = {
 			'/macd.json': getMacd,
-			
 			'/symbols.json': getSyms,
 			'/obv.json': getObv,
 			'/history.json': getHistory,
