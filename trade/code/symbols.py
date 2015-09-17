@@ -12,7 +12,7 @@ def getSyms(params):
 	if params:
 		order = params['order'][0]
 		
-		if order == 'aplha':
+		if order == 'alpha':
 			symbols = map(lambda f: f.split('.')[0].lstrip('_'), os.listdir(RAW_DIR))
 		
 		elif order == 'biggest':
