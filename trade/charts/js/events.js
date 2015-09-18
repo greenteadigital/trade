@@ -66,10 +66,17 @@ d3.select("#trendlineCtl")
 		var g = d3.select("#annotationGroup");
 		if (d3.event.target.checked) {
 			g.attr('display', 'inline');
+			d3.select('#rmTrendlines').attr('disabled', null);
 		} else {
 			g.attr('display', 'none');
+			d3.select('#rmTrendlines').attr('disabled','');
 //			d3.select('#annotationRect')
 //				.attr('width', null)
 //				.attr('height', null);
 		}
+	});
+
+d3.select("#rmTrendlines")
+	.on("click", function() {
+		d3.selectAll('.trendline').remove();
 	});
