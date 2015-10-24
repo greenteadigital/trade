@@ -17,9 +17,9 @@ from history import getHistory  # @UnresolvedImport
 
 
 if __name__ == '__main__':
-	
+
 	PORT = 80
-	
+
 	dynurls = {
 			'/macd.json': getMacd,
 			'/symbols.json': getSyms,
@@ -27,13 +27,13 @@ if __name__ == '__main__':
 			'/history.json': getHistory,
 			'/eod.json' : getEod
 			}
-	
+
 	needspool = ['/history.json']
 	cacheable = ['/history.json']
 	cache = {}
-	
+
 	class CustomHandler(SimpleHTTPRequestHandler):
-		
+
 		def end_headers(self):
 			''' No longer necessary, leaving as example '''
 			# self.send_header('Access-Control-Allow-Origin', '*')
