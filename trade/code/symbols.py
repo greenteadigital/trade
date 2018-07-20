@@ -14,6 +14,7 @@ def getSyms(params):
 		
 		if order == 'alpha':
 			symbols = map(lambda f: f.split('.')[0].lstrip('_'), os.listdir(RAW_DIR))
+			symbols.sort()
 		
 		elif order == 'biggest':
 			hfile = pjoin(JSON_DIR, "history.json")

@@ -34,7 +34,7 @@ def loadSplitData(csv_str, symbol):
 
 def downloadSplitData():
 	ip2host = dllib.getIpMap()
-	syms = map(lambda n: n.lstrip('_').split('.')[0], os.listdir(dllib.EOD_DIR))
+	syms = map(lambda n: n.lstrip('_').split('.')[0], os.listdir(const.EOD_DIR))
 	for symbol in syms:
 		ip2host = dllib.getIpMap()
 		success = False

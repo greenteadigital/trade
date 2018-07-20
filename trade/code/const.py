@@ -11,9 +11,9 @@ strio = StringIO
 # # Directories
 HOME = os.environ['HOME']
 DTOP = pjoin(HOME, 'Desktop')
-WSPACE = pjoin(HOME, 'eclipse-workspace')
+WSPACE = pjoin(HOME, 'Documents/eclipse-workspace')
 
-PROJ_DIR = pjoin(WSPACE, 'trade')
+PROJ_DIR = pjoin(WSPACE, 'trade/trade')
 DATA_DIR = pjoin(PROJ_DIR, 'data')
 
 SYM_DIR = pjoin(DATA_DIR, 'symbols')

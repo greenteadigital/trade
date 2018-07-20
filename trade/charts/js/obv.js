@@ -22,7 +22,7 @@ function buildObv(data) {
 	var gridLayer = chart.append("g");
 	var obvLayer = chart.append("g");
 	
-	var y = d3.scale.linear()
+	var y = d3.scaleLinear()
 		.domain([d3.min(obvVals) * yExaggerate, d3.max(obvVals) * yExaggerate])
 		.range([height - 1, 1]);
 	
@@ -35,7 +35,7 @@ function buildObv(data) {
 		.attr("y2", y)
 		.attr("class", "obvZero");
 	
-	var obvLine = d3.svg.line()
+	var obvLine = d3.line()
 		.x(function(d) { var selStr = "#candle"+d.Date;
 			//log(selStr)
 			var sel = d3.select(selStr);
@@ -43,7 +43,7 @@ function buildObv(data) {
 			return sel.attr("x1");
 			})
 		.y(function(d) { return y(d.OBV * yExaggerate); })
-		.interpolate(interp);
+		.curve(d3.curveLinear);
 		
 	obvLayer.append("path")
 		.attr("d", obvLine(data))

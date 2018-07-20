@@ -1,13 +1,12 @@
+#!/usr/bin/python
 from SocketServer import ThreadingTCPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from urlparse import urlparse, parse_qs
 import multiprocessing as multi
 import time
 from const import pjoin
-import const
+import const 
 import os
-import sys
-sys.path.append(r".\code")
 
 from macd import getMacd  # @UnresolvedImport
 from symbols import getSyms  # @UnresolvedImport
@@ -18,15 +17,15 @@ from history import getHistory  # @UnresolvedImport
 
 if __name__ == '__main__':
 
-	PORT = 80
+	PORT = 8080
 
 	dynurls = {
-			'/macd.json': getMacd,
-			'/symbols.json': getSyms,
-			'/obv.json': getObv,
-			'/history.json': getHistory,
-			'/eod.json' : getEod
-			}
+		'/macd.json': getMacd,
+		'/symbols.json': getSyms,
+		'/obv.json': getObv,
+		'/history.json': getHistory,
+		'/eod.json' : getEod
+		}
 
 	needspool = ['/history.json']
 	cacheable = ['/history.json']
@@ -52,7 +51,7 @@ if __name__ == '__main__':
 						self.wfile.write(cache[url.path])
 					else:
 						if url.path in needspool:
-							params['pool'] = multi.Pool(3)
+							params['pool'] = multi.Pool(4)
 						cache[url.path] = dynurls[url.path](params)
 						self.wfile.write(cache[url.path])
 				else:
@@ -81,4 +80,5 @@ if __name__ == '__main__':
 	httpd = ThreadingTCPServer(('localhost', PORT), CustomHandler)
 	sa = httpd.socket.getsockname()
 	print "Serving HTTP on", sa[0], "port", sa[1], "..."
+	os.system("open http://localhost:8080/charts/html/#A")
 	httpd.serve_forever()

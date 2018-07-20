@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
+  	<meta charset="UTF-8">
 	<script type="text/javascript" src="/charts/js/lib/d3.js" charset="utf-8"></script>
+<!-- 	<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script> -->
 	<script type="text/javascript" src="/charts/js/const.js"></script>
 	<script type="text/javascript" src="/charts/js/funcs.js"></script>
 	<script type="text/javascript" src="/charts/js/candles.js"></script>
@@ -14,13 +16,25 @@
   <body>
 	<div class="ctrls">
 		<label for="daysPer">Days/Candle: </label><input type="number" value="1" id="daysPer"/>
-		<label for="volmult">Volume: </label><input type="range" max="0.001" value="0.00001" min="0.0000001" step="0.0000001" id="volmult"/>
+		<label for="volmult">Volume: </label><input type="range" max="0.001" value="0.00001" min="0.0000001" step="0.0000005" id="volmult"/>
 		<select id="symselect"></select>
 		<input type="checkbox" id="trendlineCtl" class="cursorPointer"/>
 		<label for="trendlineCtl" class="cursorPointer">Trendlines</label>
 		<img class="cursorPointer" id="rmTrendlines" src="/charts/img/trash.gif" />
 		<input type="radio" name="drawCollapse" id="drawRadio" value="draw"><label for="drawRadio">Draw</label>
 		<input type="radio" name="drawCollapse" id="collapseRadio" value="collapse"/><label for="collapseRadio">Collapse</label>
+		<br/>
+		<span id="daysPerRadios">
+			<input type="radio" name="candleMult" id="candleMult1" value="1"><label for="candleMult1">1</label>
+			<input type="radio" name="candleMult" id="candleMult5" value="5"><label for="candleMult5">5</label>
+			<input type="radio" name="candleMult" id="candleMult10" value="10"><label for="candleMult10">10</label>
+			<input type="radio" name="candleMult" id="candleMult20" value="20"><label for="candleMult20">20</label>
+		</span>
+		<span id="symSaveRecall">
+			<button id="symSave">Save</button>
+			<button id="savedSymsLoad">Load</button>
+			<button id="resetSyms">Reset</button>
+		</span>
 	</div>
 	<br/>
 	<div class="candlesticks"></div>
@@ -35,7 +49,7 @@
 		<span class="indicatorInputs">MACD:
 			<input type="checkbox" id="macdPoints"/><label for="macdPoints">Mpts</label>
 			<input type="checkbox" id="sigPoints"/><label for="sigPoints">Spts</label>
-			<input type="checkbox" id="macdHisto"/><label for="macdHisto">Histogram</label>
+			<input type="checkbox" id="macdHisto" checked/><label for="macdHisto">Histogram</label>
 		</span>
 	</div>
 	
@@ -51,6 +65,7 @@
 	function fetchData() {
 		
 		if (symbolsLoaded == false) {
+			// use 'biggest' or 'alpha' as order param
 			d3.json(dataServer + '/symbols.json?order=biggest', function(d) {
 
 				d3.select("#symselect").selectAll("option")

@@ -5,6 +5,7 @@ import os
 import csv
 import zlib
 from const import SYM_DIR, DB_DIR, pjoin
+import base64
 
 
 def backupSymbols():
@@ -31,6 +32,7 @@ def downloadSymbols():
 def reloadSymbols():
 	'''Load symbols and metadata into sqlite'''
 	# see http://www.nasdaqtrader.com/trader.aspx?id=symboldirdefs
+	
 	with sqlite3.connect(pjoin(DB_DIR, "symbols.db")) as conn:
 		curs = conn.cursor()
 		tables = ('nasdaqlisted', 'otherlisted')
@@ -55,7 +57,7 @@ def reloadSymbols():
 # 			last = 'select * from %s where rowid=%s' % (table , curs.execute('select max(rowid) from %s' % table).fetchone()[0])
 
 def getIpMap():
-	hosts = ('real-chart.finance.yahoo.com', 'ichart.finance.yahoo.com')
+	hosts = [base64.b64decode('cXVlcnkxLmZpbmFuY2UueWFob28uY29t')]
 	ip2host = {}
 	for host in hosts:
 		ips = socket.gethostbyname_ex(host)[2]
@@ -75,3 +77,7 @@ def tryDecompress(response):
 			raise e
 	else:
 		return response
+
+if __name__ == '__main__':
+	pass
+# 	print getIpMap()

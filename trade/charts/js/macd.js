@@ -3,7 +3,7 @@ var fast = '13',
 slow = '26',
 signal = '9',
 macdPoints = false,
-macdHisto = false,
+macdHisto = true,
 sigPoints = false;
 
 var buildMacd = function(data) {
@@ -27,7 +27,7 @@ var buildMacd = function(data) {
 	var sigLayer = chart.append("g");
 	var macdLayer = chart.append("g");
 	
-	var y = d3.scale.linear()
+	var y = d3.scaleLinear()
 		.domain([d3.min(macdVals), d3.max(macdVals)])
 		.range([height-margin, 1]);
 		
@@ -40,7 +40,7 @@ var buildMacd = function(data) {
 		.attr("y2", y)
 		.attr("class", "macdZero");
 		
-	var macdLine = d3.svg.line()
+	var macdLine = d3.line()
 		.x(function(d) { var selStr = "#candle"+d.Date;
 			//log(selStr)
 			var sel = d3.select(selStr);
@@ -48,7 +48,7 @@ var buildMacd = function(data) {
 			return sel.attr("x1");
 			})
 		.y(function(d) { return y(d.MACD); })
-		.interpolate(interp);
+		.curve(d3.curveMonotoneX);
 		
 	macdLayer.append("path")
 		.attr("d", macdLine(data))
@@ -57,10 +57,10 @@ var buildMacd = function(data) {
 		.attr("fill", "none")
 		.attr("class", "macdPath");
 		
-	var sigLine = d3.svg.line()
+	var sigLine = d3.line()
 		.x(function(d) { return d3.select("#candle"+d.Date).attr("x1"); })
 		.y(function(d) { return y(d.Sig); })
-		.interpolate(interp);
+		.curve(d3.curveMonotoneX);
 		
 	sigLayer.append("path")
 		.attr("d", sigLine(data))

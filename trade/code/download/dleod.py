@@ -39,7 +39,7 @@ def loadEodData(csv_str, symbol):
 	print
 
 # build URLs with symbols and intended date range
-# make requests to yahoo in round-robin fashion
+# make requests to 'oohay'.reverse() in round-robin fashion
 def downloadEodData():
 	symconn = sqlite3.connect(os.path.join(dllib.DB_DIR, "symbols.db"))
 	symcurs = symconn.cursor()

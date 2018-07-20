@@ -1,6 +1,6 @@
 var log = console.log,
 red = "#c00",
-dataServer = 'http://localhost',
+dataServer = 'http://localhost:8080',
 w = window,
 d = document,
 e = d.documentElement,

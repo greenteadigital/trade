@@ -1,5 +1,6 @@
 
 var buildCandles = function(data) {
+	//log(data);
 	
 	var width = cwidth;
 	var height = cheight;
@@ -27,11 +28,11 @@ var buildCandles = function(data) {
 	var minY = d3.min(data.map(function(d) { return +d.Low; }));
 	var maxY = d3.max(data.map(function(d) { return +d.High; }));
 	
-	var y = d3.scale.linear()
+	var y = d3.scaleLinear()
 		.domain([0.99*minY, 1.01*maxY])
 		.range([height - margin, margin]);
 	
-	var x = d3.scale.linear()
+	var x = d3.scaleLinear()
 		.domain([0, data.length])
 		.range([width - margin - (data.length * candleWidth) - ((data.length - 1) * candleSpacing), width - margin]);
 	
@@ -58,9 +59,9 @@ var buildCandles = function(data) {
 		.enter().append("text")
 		.attr("x", x)
 		.attr("y", height - margin)
-		//.attr("dy", 20)
+		.attr("dy", 20)
 		.attr("text-anchor", "middle")
-		.text(function(d) { return d.Date; });
+		.text(function(d) { return data[d].Date; });
 
 	gridLayer.selectAll("text.yLabel")
 		.data(y.ticks(yTicks))
@@ -70,7 +71,7 @@ var buildCandles = function(data) {
 		.attr("dy", 5)
 		.attr("dx", 20)		 
 		.attr("text-anchor", "middle")
-		.text(function(d){ return d3.round(d, 2) });
+		.text(function(d) { return d });
 
 	function setColor(d, i) {
 		if (i > 0) {
@@ -95,7 +96,10 @@ var buildCandles = function(data) {
 			.attr("width", candleWidth)
 			.attr("class", "volumeBar")
 			.attr("fill", setColor)
-			.attr("title", function(d) { return d.Date + " Vol: " + d.Volume });
+			.append("title")
+			.text(function(d) {
+				return d.Date + " Vol: " + d.Volume.toLocaleString(); 
+			});
 	}
 	drawVolume();
 	
@@ -111,6 +115,7 @@ var buildCandles = function(data) {
 		.attr("y2", function(d) { return y(+d.Low) })
 		.attr("stroke", setColor)
 		.attr("id", function(d) { return "candle" + d.Date });
+
 	
 	// draw candles
 	candle.append("rect")
@@ -120,14 +125,15 @@ var buildCandles = function(data) {
 		.attr("width", candleWidth)
 		.attr("stroke", setColor)
 		.attr("fill", function(d, i) { return +d.Close > +d.Open  ? "white" : d3.select("#candle" + d.Date).attr("stroke") })
-		.attr("title", function(d) {
+		.append("title")
+		.text(function(d) {
 			return d.Date
-			+ " O:" + d.Open
-			+ " H:" + d.High
-			+ " L:" + d.Low
-			+ " C:" + d.Close
-			+ " V:" + d.Volume
-			});
+				+ ", O:" + twoDp(d.Open)
+				+ ", H:" + twoDp(d.High)
+				+ ", L:" + twoDp(d.Low)
+				+ ", C:" + twoDp(d.Close)
+				+ ", V:" + d.Volume.toLocaleString()
+		});
 	
 	window.scrollTo(scrollMaxX, 0);	
 	enableTrendLine();

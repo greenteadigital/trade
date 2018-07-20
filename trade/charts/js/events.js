@@ -80,3 +80,20 @@ d3.select("#rmTrendlines")
 	.on("click", function() {
 		d3.selectAll('.trendline').remove();
 	});
+
+d3.selectAll('input[name=candleMult]')
+	.on('change', function() {
+		d3.selectAll("svg").remove();
+		d3.select('#daysPer')
+			.attr('value', d3.event.target.value)
+			.text('')
+			.html('');
+		daysPerCandle = d3.event.target.value;
+		histDepth = getHistDepth();
+		fetchData();
+	});
+d3.select('#symSave')
+	.on('click', function() {
+		var sym = d3.select('#symselect option[selected]').attr('value');
+		log(sym);
+	});

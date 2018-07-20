@@ -80,5 +80,10 @@ rect#annotationRect {
 #trendlineTool {
 	margin: 23px 0 -18px;
 }
-
+#daysPerRadios {
+	margin:0 0 0 73px;
+}
+#symSaveRecall {
+	margin:0 0 0 152px;
+}
 
